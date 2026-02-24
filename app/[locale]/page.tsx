@@ -4,7 +4,10 @@ import Prompt from '@/models/Prompt';
 import { PromptCard } from '@/components/prompts/PromptCard';
 import { AdBanner } from '@/components/ads/AdBanner';
 import { AIServiceIcon, AI_BRAND_COLORS } from '@/components/icons/AIServiceIcon';
-import { ArrowRight, Sparkles, Zap, Globe, Users, TrendingUp, Shield } from 'lucide-react';
+import {
+  ArrowRight, Sparkles, Zap, Globe, Users, TrendingUp, Shield,
+  FileText, Image, Video, Code2,
+} from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
@@ -18,6 +21,13 @@ const AI_TOOLS = [
   { id: 'stable-diffusion', label: 'Stable Diffusion' },
   { id: 'copilot', label: 'Copilot' },
   { id: 'perplexity', label: 'Perplexity' },
+];
+
+const GENERATION_TYPES = [
+  { key: 'text', label: '텍스트', icon: FileText, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
+  { key: 'image', label: '이미지', icon: Image, color: 'text-pink-600', bg: 'bg-pink-50', border: 'border-pink-100' },
+  { key: 'video', label: '동영상', icon: Video, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+  { key: 'development', label: '개발', icon: Code2, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
 ];
 
 function serializePrompt(prompt: any) {
@@ -34,20 +44,30 @@ function serializePrompt(prompt: any) {
 async function getFeaturedPrompts() {
   try {
     await connectDB();
-    const [latest, popular] = await Promise.all([
+    const [latest, popular, typeCounts] = await Promise.all([
       Prompt.find({ status: 'active' }).sort({ createdAt: -1 }).limit(8).lean(),
       Prompt.find({ status: 'active' }).sort({ likeCount: -1 }).limit(4).lean(),
+      Prompt.aggregate([
+        { $match: { status: 'active' } },
+        { $group: { _id: '$generationType', count: { $sum: 1 } } },
+      ]),
     ]);
     const total = await Prompt.countDocuments({ status: 'active' });
-    return { latest: latest.map(serializePrompt), popular: popular.map(serializePrompt), total };
+    const typeCountMap = Object.fromEntries(typeCounts.map((c: any) => [c._id, c.count]));
+    return {
+      latest: latest.map(serializePrompt),
+      popular: popular.map(serializePrompt),
+      total,
+      typeCountMap,
+    };
   } catch {
-    return { latest: [], popular: [], total: 0 };
+    return { latest: [], popular: [], total: 0, typeCountMap: {} };
   }
 }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const { latest, popular, total } = await getFeaturedPrompts();
+  const { latest, popular, total, typeCountMap } = await getFeaturedPrompts();
   const t = await getTranslations('home');
 
   const FEATURES = [
@@ -62,11 +82,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       {/* ─── HERO ─── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900">
-        {/* Dot pattern overlay */}
         <div className="absolute inset-0 opacity-20">
           <div className="dot-pattern w-full h-full" />
         </div>
-        {/* Glow blobs */}
         <div className="absolute top-20 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl" />
         <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-violet-600/20 rounded-full blur-3xl" />
 
@@ -133,25 +151,56 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <AdBanner adSlot="1234567890" adFormat="horizontal" />
       </div>
 
-      {/* ─── AI TOOLS ─── */}
+      {/* ─── BROWSE SECTION ─── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl font-bold text-slate-900">{t('explore_by_ai')}</h2>
-          <p className="text-slate-500 mt-2 text-sm">{t('explore_ai_subtitle')}</p>
+        <div className="flex items-end justify-between mb-8">
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">{t('explore_by_ai')}</p>
+            <h2 className="text-2xl font-bold text-slate-900">탐색하기</h2>
+          </div>
+          <Link href={`/${locale}/explore`} className="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700">
+            전체 보기 <ArrowRight size={14} />
+          </Link>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+
+        {/* Generation Types — 4 clean cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+          {GENERATION_TYPES.map(({ key, label, icon: Icon, color, bg, border }) => (
+            <Link
+              key={key}
+              href={`/${locale}/prompts?generationType=${key}`}
+              className={`group flex items-center gap-3 px-4 py-4 rounded-xl border ${bg} ${border} hover:shadow-sm transition-all`}
+            >
+              <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${bg} border ${border}`}>
+                <Icon size={18} className={color} />
+              </div>
+              <div>
+                <p className={`font-semibold text-sm ${color}`}>{label}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{typeCountMap[key] ?? 0}개</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 mb-6">
+          <hr className="flex-1 border-gray-100" />
+          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">AI 도구</span>
+          <hr className="flex-1 border-gray-100" />
+        </div>
+
+        {/* AI Tools — clean horizontal list */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {AI_TOOLS.map((tool) => {
             const colors = AI_BRAND_COLORS[tool.id] || AI_BRAND_COLORS.other;
             return (
               <Link
                 key={tool.id}
                 href={`/${locale}/prompts?aiTool=${tool.id}`}
-                className={`group flex items-center gap-3 p-4 rounded-2xl border hover:shadow-lg transition-all duration-200 ${colors.bg} ${colors.border} border`}
+                className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-white border border-gray-100 hover:border-gray-200 hover:bg-gray-50 transition-all group"
               >
-                <div className="shrink-0">
-                  <AIServiceIcon tool={tool.id} size={36} />
-                </div>
-                <span className={`font-semibold text-sm ${colors.text}`}>{tool.label}</span>
+                <AIServiceIcon tool={tool.id} size={22} />
+                <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{tool.label}</span>
               </Link>
             );
           })}
@@ -162,15 +211,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {popular.length > 0 && (
         <section className="bg-slate-50 py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-end justify-between mb-8">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <TrendingUp size={18} className="text-indigo-500" />
+                  <TrendingUp size={14} className="text-indigo-500" />
                   <span className="text-xs font-semibold text-indigo-500 uppercase tracking-wider">{t('trending_badge')}</span>
                 </div>
                 <h2 className="text-2xl font-bold text-slate-900">{t('popular_title')}</h2>
               </div>
-              <Link href={`/${locale}/prompts?sort=popular`} className="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+              <Link href={`/${locale}/prompts?sort=popular`} className="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700">
                 {t('view_all')} <ArrowRight size={14} />
               </Link>
             </div>
@@ -185,15 +234,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       {/* ─── LATEST PROMPTS ─── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-end justify-between mb-8">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Sparkles size={18} className="text-violet-500" />
+              <Sparkles size={14} className="text-violet-500" />
               <span className="text-xs font-semibold text-violet-500 uppercase tracking-wider">{t('fresh_badge')}</span>
             </div>
             <h2 className="text-2xl font-bold text-slate-900">{t('latest_title')}</h2>
           </div>
-          <Link href={`/${locale}/prompts`} className="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+          <Link href={`/${locale}/prompts`} className="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700">
             {t('view_all')} <ArrowRight size={14} />
           </Link>
         </div>
