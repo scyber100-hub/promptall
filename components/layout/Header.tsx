@@ -51,7 +51,7 @@ export function Header({ locale }: HeaderProps) {
               {t('nav.home')}
             </Link>
             <Link href={`/${locale}/prompts`} className="px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
-              Browse
+              {t('nav.browse')}
             </Link>
             <Link href={`/${locale}/explore`} className="px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
               {t('nav.explore')}
@@ -156,7 +156,7 @@ export function Header({ locale }: HeaderProps) {
       {mobileOpen && (
         <div className="md:hidden border-t border-slate-200 bg-white/95 backdrop-blur-sm px-4 py-4 space-y-1">
           <Link href={`/${locale}`} onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 text-sm font-medium">{t('nav.home')}</Link>
-          <Link href={`/${locale}/prompts`} onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 text-sm font-medium">Browse</Link>
+          <Link href={`/${locale}/prompts`} onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 text-sm font-medium">{t('nav.browse')}</Link>
           <Link href={`/${locale}/explore`} onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 text-sm font-medium">{t('nav.explore')}</Link>
           {session ? (
             <>

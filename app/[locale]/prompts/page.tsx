@@ -6,6 +6,7 @@ import { PromptFilters } from '@/components/prompts/PromptFilters';
 import { AdBanner } from '@/components/ads/AdBanner';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -66,6 +67,7 @@ export default async function PromptsPage({ params, searchParams }: PromptsPageP
   const { locale } = await params;
   const resolvedSearchParams = await searchParams;
   const { prompts, total, page, pages } = await getPrompts(resolvedSearchParams);
+  const t = await getTranslations('prompts');
 
   const buildUrl = (p: number) => {
     const urlParams = new URLSearchParams(resolvedSearchParams as Record<string, string>);
@@ -87,14 +89,14 @@ export default async function PromptsPage({ params, searchParams }: PromptsPageP
         {/* Main content */}
         <div className="flex-1">
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-gray-500">{total} prompts found</p>
+            <p className="text-sm text-gray-500">{t('found', { count: total })}</p>
           </div>
 
           {prompts.length === 0 ? (
             <div className="text-center py-20 text-gray-400">
-              <p className="text-lg">No prompts found</p>
+              <p className="text-lg">{t('no_found')}</p>
               <Link href={`/${locale}/prompts/new`} className="mt-4 inline-block text-indigo-600 hover:underline">
-                Be the first to submit one →
+                {t('first_submit')}
               </Link>
             </div>
           ) : (
