@@ -13,6 +13,7 @@ export const dynamic = 'force-dynamic';
 interface SearchParamsObj {
   page?: string;
   aiTool?: string;
+  generationType?: string;
   category?: string;
   sort?: string;
   q?: string;
@@ -32,6 +33,7 @@ async function getPrompts(searchParams: SearchParamsObj) {
   const query: Record<string, unknown> = { status: 'active' };
 
   if (searchParams.aiTool && searchParams.aiTool !== 'all') query.aiTool = searchParams.aiTool;
+  if (searchParams.generationType && searchParams.generationType !== 'all') query.generationType = searchParams.generationType;
   if (searchParams.category && searchParams.category !== 'all') query.category = searchParams.category;
   if (searchParams.q) query.$text = { $search: searchParams.q };
 

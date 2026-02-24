@@ -58,20 +58,34 @@
     "other": "기타",
     "all": "모든 AI 도구"
   },
+  "generation_types": {
+    "all": "전체",
+    "text": "텍스트",
+    "image": "이미지",
+    "video": "동영상",
+    "development": "개발"
+  },
   "categories": {
-    "writing": "글쓰기",
-    "coding": "코딩",
-    "image": "이미지 생성",
-    "business": "비즈니스",
-    "education": "교육",
-    "marketing": "마케팅",
-    "creative": "창작",
-    "productivity": "생산성",
-    "research": "리서치",
-    "other": "기타",
     "all": "모든 카테고리",
-    "analysis": "데이터 분석",
-    "design": "디자인"
+    "business": "사업계획",
+    "academic": "논문/학술",
+    "marketing": "마케팅/리서치",
+    "writing": "글쓰기/창작",
+    "education": "교육/학습",
+    "creative": "창의/아이디어",
+    "productivity": "업무/생산성",
+    "illustration": "일러스트",
+    "photo": "포토리얼",
+    "design": "디자인",
+    "art": "예술/아트",
+    "script": "스크립트/시나리오",
+    "social": "소셜미디어",
+    "animation": "애니메이션",
+    "frontend": "프론트엔드",
+    "backend": "백엔드",
+    "database": "데이터베이스",
+    "devops": "DevOps/인프라",
+    "other": "기타"
   },
   "home": {
     "hero_badge": "AI 프롬프트 커뮤니티 1위",
@@ -122,7 +136,8 @@
     "title": "프롬프트 둘러보기",
     "by_ai": "AI 도구별",
     "by_category": "카테고리별",
-    "prompts_count": "프롬프트 {count}개"
+    "prompts_count": "프롬프트 {count}개",
+    "prompts_total": "개"
   },
   "prompts": {
     "new_title": "프롬프트 등록",
@@ -134,6 +149,8 @@
     "description_label": "짧은 설명 (선택)",
     "description_placeholder": "이 프롬프트가 무엇을 하는지 간략히 설명해주세요",
     "ai_tool_label": "AI 도구",
+    "generation_type_label": "생성 유형",
+    "generation_type_placeholder": "유형 선택",
     "category_label": "카테고리",
     "tags_label": "태그 (선택)",
     "tags_placeholder": "태그를 최대 5개 추가하세요",

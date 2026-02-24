@@ -24,11 +24,21 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     if (existing) {
       await Like.deleteOne({ _id: existing._id });
-      await Prompt.findByIdAndUpdate(id, { $inc: { likeCount: -1 } });
+      const updated = await Prompt.findByIdAndUpdate(id, { $inc: { likeCount: -1 } }, { new: true });
+      if (updated) {
+        await Prompt.findByIdAndUpdate(id, {
+          $set: { trendingScore: updated.likeCount * 2 + updated.viewCount * 0.2 + updated.bookmarkCount * 1 },
+        });
+      }
       return NextResponse.json({ liked: false });
     } else {
       await Like.create({ userId, targetId: id, targetType: 'prompt' });
-      await Prompt.findByIdAndUpdate(id, { $inc: { likeCount: 1 } });
+      const updated = await Prompt.findByIdAndUpdate(id, { $inc: { likeCount: 1 } }, { new: true });
+      if (updated) {
+        await Prompt.findByIdAndUpdate(id, {
+          $set: { trendingScore: updated.likeCount * 2 + updated.viewCount * 0.2 + updated.bookmarkCount * 1 },
+        });
+      }
       return NextResponse.json({ liked: true });
     }
   } catch (error) {

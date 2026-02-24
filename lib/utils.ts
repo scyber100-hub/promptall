@@ -63,16 +63,28 @@ export const AI_TOOL_COLORS: Record<string, string> = {
 };
 
 export const CATEGORY_LABELS: Record<string, string> = {
-  writing: 'Writing',
-  coding: 'Coding',
-  image: 'Image',
+  // text
   business: 'Business',
-  education: 'Education',
+  academic: 'Academic',
   marketing: 'Marketing',
+  writing: 'Writing',
+  education: 'Education',
   creative: 'Creative',
   productivity: 'Productivity',
-  research: 'Research',
-  analysis: 'Analysis',
+  // image
+  illustration: 'Illustration',
+  photo: 'Photo Real',
   design: 'Design',
+  art: 'Art',
+  // video
+  script: 'Script',
+  social: 'Social Media',
+  animation: 'Animation',
+  // development
+  frontend: 'Frontend',
+  backend: 'Backend',
+  database: 'Database',
+  devops: 'DevOps',
+  // shared
   other: 'Other',
 };

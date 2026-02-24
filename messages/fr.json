@@ -58,20 +58,34 @@
     "perplexity": "Perplexity",
     "other": "Autre"
   },
+  "generation_types": {
+    "all": "Tous",
+    "text": "Texte",
+    "image": "Image",
+    "video": "Vidéo",
+    "development": "Développement"
+  },
   "categories": {
     "all": "Toutes les catégories",
-    "writing": "Écriture",
-    "coding": "Programmation",
-    "image": "Génération d'images",
-    "business": "Business",
-    "education": "Éducation",
-    "marketing": "Marketing",
-    "creative": "Créatif",
-    "productivity": "Productivité",
-    "research": "Recherche",
-    "other": "Autre",
-    "analysis": "Analyse",
-    "design": "Design"
+    "business": "Plan d'affaires",
+    "academic": "Académique / Recherche",
+    "marketing": "Marketing / Recherche",
+    "writing": "Écriture / Créatif",
+    "education": "Éducation / Apprentissage",
+    "creative": "Créatif / Idées",
+    "productivity": "Travail / Productivité",
+    "illustration": "Illustration",
+    "photo": "Photo réaliste",
+    "design": "Design",
+    "art": "Art",
+    "script": "Scénario",
+    "social": "Réseaux sociaux",
+    "animation": "Animation",
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "database": "Base de données",
+    "devops": "DevOps / Infrastructure",
+    "other": "Autre"
   },
   "home": {
     "hero_badge": "La communauté de prompts IA #1",
@@ -122,7 +136,8 @@
     "title": "Explorer les prompts",
     "by_ai": "Par outil IA",
     "by_category": "Par catégorie",
-    "prompts_count": "{count} prompts"
+    "prompts_count": "{count} prompts",
+    "prompts_total": "prompts"
   },
   "prompts": {
     "new_title": "Soumettre un prompt",
@@ -134,6 +149,8 @@
     "description_label": "Description courte (Optionnel)",
     "description_placeholder": "Décrivez brièvement ce que fait ce prompt",
     "ai_tool_label": "Outil IA",
+    "generation_type_label": "Type de génération",
+    "generation_type_placeholder": "Sélectionner le type",
     "category_label": "Catégorie",
     "tags_label": "Tags (Optionnel)",
     "tags_placeholder": "Ajoutez jusqu'à 5 tags",

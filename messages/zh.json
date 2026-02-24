@@ -58,20 +58,34 @@
     "perplexity": "Perplexity",
     "other": "其他"
   },
+  "generation_types": {
+    "all": "全部",
+    "text": "文本",
+    "image": "图像",
+    "video": "视频",
+    "development": "开发"
+  },
   "categories": {
     "all": "所有分类",
-    "writing": "写作",
-    "coding": "编程",
-    "image": "图像生成",
-    "business": "商业",
-    "education": "教育",
-    "marketing": "营销",
-    "creative": "创意",
-    "productivity": "效率",
-    "research": "研究",
-    "other": "其他",
-    "analysis": "数据分析",
-    "design": "设计"
+    "business": "商业计划",
+    "academic": "论文/学术",
+    "marketing": "营销/调研",
+    "writing": "写作/创作",
+    "education": "教育/学习",
+    "creative": "创意/想法",
+    "productivity": "办公/效率",
+    "illustration": "插画",
+    "photo": "照片写实",
+    "design": "设计",
+    "art": "艺术",
+    "script": "脚本/剧本",
+    "social": "社交媒体",
+    "animation": "动画",
+    "frontend": "前端",
+    "backend": "后端",
+    "database": "数据库",
+    "devops": "DevOps/基础设施",
+    "other": "其他"
   },
   "home": {
     "hero_badge": "AI提示词社区第一名",
@@ -122,7 +136,8 @@
     "title": "探索提示词",
     "by_ai": "按AI工具",
     "by_category": "按分类",
-    "prompts_count": "{count}个提示词"
+    "prompts_count": "{count}个提示词",
+    "prompts_total": "个"
   },
   "prompts": {
     "new_title": "提交提示词",
@@ -134,6 +149,8 @@
     "description_label": "简短描述（可选）",
     "description_placeholder": "简要描述这个提示词的用途",
     "ai_tool_label": "AI工具",
+    "generation_type_label": "生成类型",
+    "generation_type_placeholder": "选择类型",
     "category_label": "分类",
     "tags_label": "标签（可选）",
     "tags_placeholder": "最多添加5个标签",

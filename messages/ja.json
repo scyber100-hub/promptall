@@ -58,20 +58,34 @@
     "perplexity": "Perplexity",
     "other": "その他"
   },
+  "generation_types": {
+    "all": "すべて",
+    "text": "テキスト",
+    "image": "画像",
+    "video": "動画",
+    "development": "開発"
+  },
   "categories": {
     "all": "すべてのカテゴリ",
-    "writing": "ライティング",
-    "coding": "コーディング",
-    "image": "画像生成",
-    "business": "ビジネス",
-    "education": "教育",
-    "marketing": "マーケティング",
-    "creative": "クリエイティブ",
-    "productivity": "生産性",
-    "research": "リサーチ",
-    "other": "その他",
-    "analysis": "分析",
-    "design": "デザイン"
+    "business": "事業計画",
+    "academic": "論文/学術",
+    "marketing": "マーケティング/リサーチ",
+    "writing": "ライティング/創作",
+    "education": "教育/学習",
+    "creative": "クリエイティブ/アイデア",
+    "productivity": "業務/生産性",
+    "illustration": "イラスト",
+    "photo": "フォトリアル",
+    "design": "デザイン",
+    "art": "アート",
+    "script": "スクリプト/シナリオ",
+    "social": "ソーシャルメディア",
+    "animation": "アニメーション",
+    "frontend": "フロントエンド",
+    "backend": "バックエンド",
+    "database": "データベース",
+    "devops": "DevOps/インフラ",
+    "other": "その他"
   },
   "home": {
     "hero_badge": "AIプロンプトコミュニティNo.1",
@@ -122,7 +136,8 @@
     "title": "プロンプトを探索",
     "by_ai": "AIツール別",
     "by_category": "カテゴリ別",
-    "prompts_count": "{count}件のプロンプト"
+    "prompts_count": "{count}件のプロンプト",
+    "prompts_total": "件"
   },
   "prompts": {
     "new_title": "プロンプトを投稿",
@@ -134,6 +149,8 @@
     "description_label": "説明 (任意)",
     "description_placeholder": "このプロンプトの説明を入力",
     "ai_tool_label": "AIツール",
+    "generation_type_label": "生成タイプ",
+    "generation_type_placeholder": "タイプを選択",
     "category_label": "カテゴリ",
     "tags_label": "タグ (任意)",
     "tags_placeholder": "最大5つのタグを追加",

@@ -20,11 +20,21 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     if (existing) {
       await Bookmark.deleteOne({ _id: existing._id });
-      await Prompt.findByIdAndUpdate(id, { $inc: { bookmarkCount: -1 } });
+      const updated = await Prompt.findByIdAndUpdate(id, { $inc: { bookmarkCount: -1 } }, { new: true });
+      if (updated) {
+        await Prompt.findByIdAndUpdate(id, {
+          $set: { trendingScore: updated.likeCount * 2 + updated.viewCount * 0.2 + updated.bookmarkCount * 1 },
+        });
+      }
       return NextResponse.json({ bookmarked: false });
     } else {
       await Bookmark.create({ userId, promptId: id });
-      await Prompt.findByIdAndUpdate(id, { $inc: { bookmarkCount: 1 } });
+      const updated = await Prompt.findByIdAndUpdate(id, { $inc: { bookmarkCount: 1 } }, { new: true });
+      if (updated) {
+        await Prompt.findByIdAndUpdate(id, {
+          $set: { trendingScore: updated.likeCount * 2 + updated.viewCount * 0.2 + updated.bookmarkCount * 1 },
+        });
+      }
       return NextResponse.json({ bookmarked: true });
     }
   } catch (error) {

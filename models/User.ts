@@ -10,6 +10,7 @@ export interface IUser extends Document {
   bio?: string;
   provider: 'email' | 'google';
   role: 'user' | 'admin';
+  status: 'active' | 'suspended';
   promptCount: number;
   likeCount: number;
   createdAt: Date;
@@ -27,6 +28,7 @@ const UserSchema = new Schema<IUser>(
     bio: { type: String, maxlength: 200 },
     provider: { type: String, enum: ['email', 'google'], default: 'email' },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    status: { type: String, enum: ['active', 'suspended'], default: 'active' },
     promptCount: { type: Number, default: 0 },
     likeCount: { type: Number, default: 0 },
   },

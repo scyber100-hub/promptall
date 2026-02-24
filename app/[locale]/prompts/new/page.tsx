@@ -1,23 +1,28 @@
 'use client';
-import React from 'react';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 
 const AI_TOOLS = ['chatgpt', 'claude', 'gemini', 'midjourney', 'dalle', 'stable-diffusion', 'copilot', 'perplexity', 'other'];
-const CATEGORIES = ['writing', 'coding', 'image', 'business', 'education', 'marketing', 'creative', 'productivity', 'research', 'analysis', 'design', 'other'];
+const GENERATION_TYPES = ['text', 'image', 'video', 'development'];
+const CATEGORIES_BY_TYPE: Record<string, string[]> = {
+  text: ['business', 'academic', 'marketing', 'writing', 'education', 'creative', 'productivity', 'other'],
+  image: ['illustration', 'photo', 'design', 'art', 'other'],
+  video: ['script', 'social', 'animation', 'other'],
+  development: ['frontend', 'backend', 'database', 'devops', 'other'],
+};
 
-export default function NewPromptPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = React.use(params);
+export default function NewPromptPage() {
+  const { locale } = useParams() as { locale: string };
   const t = useTranslations();
   const { data: session, status } = useSession();
   const router = useRouter();
 
   const [form, setForm] = useState({
     title: '', content: '', description: '',
-    aiTool: 'chatgpt', category: 'writing',
+    aiTool: 'chatgpt', generationType: 'text', category: 'writing',
     tags: '', resultText: '', resultLink: '',
   });
   const [images, setImages] = useState<string[]>([]);
@@ -34,8 +39,17 @@ export default function NewPromptPage({ params }: { params: Promise<{ locale: st
   if (status === 'loading') return null;
   if (!session) return null;
 
+  const categories = CATEGORIES_BY_TYPE[form.generationType] || CATEGORIES_BY_TYPE.text;
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    if (name === 'generationType') {
+      // Reset category when generation type changes
+      const newCategories = CATEGORIES_BY_TYPE[value] || CATEGORIES_BY_TYPE.text;
+      setForm((prev) => ({ ...prev, generationType: value, category: newCategories[0] }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,8 +69,16 @@ export default function NewPromptPage({ params }: { params: Promise<{ locale: st
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title || !form.content) {
-      setError('Title and content are required');
+    if (!form.title || form.title.length < 5 || form.title.length > 80) {
+      setError('Title must be between 5 and 80 characters');
+      return;
+    }
+    if (!form.description || form.description.length < 10 || form.description.length > 160) {
+      setError('Description must be between 10 and 160 characters');
+      return;
+    }
+    if (!form.content || form.content.length < 50) {
+      setError('Content must be at least 50 characters');
       return;
     }
 
@@ -69,14 +91,14 @@ export default function NewPromptPage({ params }: { params: Promise<{ locale: st
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          tags: form.tags.split(',').map((t) => t.trim()).filter(Boolean).slice(0, 5),
+          tags: form.tags.split(',').map((t) => t.trim()).filter(Boolean).slice(0, 10),
           resultImages: images,
         }),
       });
 
       const data = await res.json();
       if (res.ok) {
-        trackEvent('prompt_create', { ai_tool: form.aiTool, category: form.category });
+        trackEvent('prompt_create', { ai_tool: form.aiTool, generation_type: form.generationType, category: form.category });
         router.push(`/${locale}/prompts/${data.prompt.slug}`);
       } else {
         setError(data.error || 'Something went wrong');
@@ -97,10 +119,13 @@ export default function NewPromptPage({ params }: { params: Promise<{ locale: st
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">{t('prompts.title_label')} *</label>
           <input
-            name="title" value={form.title} onChange={handleChange} maxLength={100}
+            name="title" value={form.title} onChange={handleChange} maxLength={80}
             placeholder={t('prompts.title_placeholder')}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
+          <p className={`text-xs text-right mt-1 ${form.title.length > 80 || (form.title.length > 0 && form.title.length < 5) ? 'text-red-500' : 'text-gray-400'}`}>
+            {form.title.length}/80 {form.title.length > 0 && form.title.length < 5 ? '(min 5)' : ''}
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -110,20 +135,31 @@ export default function NewPromptPage({ params }: { params: Promise<{ locale: st
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               {AI_TOOLS.map((tool) => (
-                <option key={tool} value={tool}>{t(`ai_tools.${tool}`)}</option>
+                <option key={tool} value={tool}>{t(`ai_tools.${tool}` as any)}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('prompts.category_label')} *</label>
-            <select name="category" value={form.category} onChange={handleChange}
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('prompts.generation_type_label')} *</label>
+            <select name="generationType" value={form.generationType} onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>{t(`categories.${cat}`)}</option>
+              {GENERATION_TYPES.map((gt) => (
+                <option key={gt} value={gt}>{t(`generation_types.${gt}` as any)}</option>
               ))}
             </select>
           </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('prompts.category_label')} *</label>
+          <select name="category" value={form.category} onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>{t(`categories.${cat}` as any)}</option>
+            ))}
+          </select>
         </div>
 
         <div>
@@ -133,16 +169,21 @@ export default function NewPromptPage({ params }: { params: Promise<{ locale: st
             placeholder={t('prompts.content_placeholder')}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-sm resize-y"
           />
-          <p className="text-xs text-gray-400 text-right mt-1">{form.content.length}/5000</p>
+          <p className={`text-xs text-right mt-1 ${form.content.length > 0 && form.content.length < 50 ? 'text-red-500' : 'text-gray-400'}`}>
+            {form.content.length}/5000 {form.content.length > 0 && form.content.length < 50 ? `(min 50, ${50 - form.content.length} more)` : ''}
+          </p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('prompts.description_label')}</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('prompts.description_label')} *</label>
           <input
-            name="description" value={form.description} onChange={handleChange} maxLength={200}
+            name="description" value={form.description} onChange={handleChange} maxLength={160}
             placeholder={t('prompts.description_placeholder')}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
+          <p className={`text-xs text-right mt-1 ${form.description.length > 0 && form.description.length < 10 ? 'text-red-500' : 'text-gray-400'}`}>
+            {form.description.length}/160 {form.description.length > 0 && form.description.length < 10 ? '(min 10)' : ''}
+          </p>
         </div>
 
         <div>
@@ -152,7 +193,7 @@ export default function NewPromptPage({ params }: { params: Promise<{ locale: st
             placeholder={t('prompts.tags_placeholder')}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
-          <p className="text-xs text-gray-400 mt-1">Separate with commas (max 5)</p>
+          <p className="text-xs text-gray-400 mt-1">Separate with commas (max 10)</p>
         </div>
 
         <div>

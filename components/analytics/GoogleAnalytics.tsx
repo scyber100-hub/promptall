@@ -11,7 +11,8 @@ export function GoogleAnalytics() {
 
   useEffect(() => {
     if (!GA_MEASUREMENT_ID) return;
-    const url = pathname + searchParams.toString();
+    const qs = searchParams.toString();
+    const url = pathname + (qs ? '?' + qs : '');
     window.gtag?.('config', GA_MEASUREMENT_ID, { page_path: url });
   }, [pathname, searchParams]);
 

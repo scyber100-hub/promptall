@@ -58,20 +58,34 @@
     "perplexity": "Perplexity",
     "other": "Otro"
   },
+  "generation_types": {
+    "all": "Todos",
+    "text": "Texto",
+    "image": "Imagen",
+    "video": "Video",
+    "development": "Desarrollo"
+  },
   "categories": {
     "all": "Todas las categorías",
-    "writing": "Escritura",
-    "coding": "Programación",
-    "image": "Generación de imágenes",
-    "business": "Negocios",
-    "education": "Educación",
-    "marketing": "Marketing",
-    "creative": "Creativo",
-    "productivity": "Productividad",
-    "research": "Investigación",
-    "other": "Otro",
-    "analysis": "Análisis",
-    "design": "Diseño"
+    "business": "Plan de negocio",
+    "academic": "Académico / Investigación",
+    "marketing": "Marketing / Investigación",
+    "writing": "Escritura / Creativo",
+    "education": "Educación / Aprendizaje",
+    "creative": "Creativo / Ideas",
+    "productivity": "Trabajo / Productividad",
+    "illustration": "Ilustración",
+    "photo": "Foto realista",
+    "design": "Diseño",
+    "art": "Arte",
+    "script": "Guion / Escenario",
+    "social": "Redes sociales",
+    "animation": "Animación",
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "database": "Base de datos",
+    "devops": "DevOps / Infraestructura",
+    "other": "Otro"
   },
   "home": {
     "hero_badge": "La comunidad de prompts IA #1",
@@ -122,7 +136,8 @@
     "title": "Explorar Prompts",
     "by_ai": "Por herramienta IA",
     "by_category": "Por categoría",
-    "prompts_count": "{count} prompts"
+    "prompts_count": "{count} prompts",
+    "prompts_total": "prompts"
   },
   "prompts": {
     "new_title": "Enviar un Prompt",
@@ -134,6 +149,8 @@
     "description_label": "Descripción corta (Opcional)",
     "description_placeholder": "Describe brevemente qué hace este prompt",
     "ai_tool_label": "Herramienta IA",
+    "generation_type_label": "Tipo de generación",
+    "generation_type_placeholder": "Seleccionar tipo",
     "category_label": "Categoría",
     "tags_label": "Etiquetas (Opcional)",
     "tags_placeholder": "Agrega hasta 5 etiquetas",

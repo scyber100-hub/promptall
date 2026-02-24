@@ -1,13 +1,12 @@
 'use client';
-import React from 'react';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
-export default function SignInPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = React.use(params);
+export default function SignInPage() {
+  const { locale } = useParams() as { locale: string };
   const t = useTranslations('auth');
   const router = useRouter();
   const [form, setForm] = useState({ email: '', password: '' });

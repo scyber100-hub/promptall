@@ -58,20 +58,34 @@
     "other": "Other",
     "all": "All AI Tools"
   },
+  "generation_types": {
+    "all": "All Types",
+    "text": "Text",
+    "image": "Image",
+    "video": "Video",
+    "development": "Development"
+  },
   "categories": {
-    "writing": "Writing",
-    "coding": "Coding",
-    "image": "Image Generation",
-    "business": "Business",
-    "education": "Education",
-    "marketing": "Marketing",
-    "creative": "Creative",
-    "productivity": "Productivity",
-    "research": "Research",
-    "other": "Other",
     "all": "All Categories",
-    "analysis": "Analysis",
-    "design": "Design"
+    "business": "Business Plan",
+    "academic": "Academic / Research",
+    "marketing": "Marketing / Research",
+    "writing": "Writing / Creative",
+    "education": "Education / Learning",
+    "creative": "Creative / Ideas",
+    "productivity": "Work / Productivity",
+    "illustration": "Illustration",
+    "photo": "Photo Realistic",
+    "design": "Design",
+    "art": "Art",
+    "script": "Script / Scenario",
+    "social": "Social Media",
+    "animation": "Animation",
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "database": "Database",
+    "devops": "DevOps / Infra",
+    "other": "Other"
   },
   "home": {
     "hero_badge": "The #1 AI Prompt Community",
@@ -122,7 +136,8 @@
     "title": "Explore Prompts",
     "by_ai": "By AI Tool",
     "by_category": "By Category",
-    "prompts_count": "{count} prompts"
+    "prompts_count": "{count} prompts",
+    "prompts_total": "prompts"
   },
   "prompts": {
     "new_title": "Submit a Prompt",
@@ -134,6 +149,8 @@
     "description_label": "Short Description (Optional)",
     "description_placeholder": "Briefly describe what this prompt does",
     "ai_tool_label": "AI Tool",
+    "generation_type_label": "Generation Type",
+    "generation_type_placeholder": "Select type",
     "category_label": "Category",
     "tags_label": "Tags (Optional)",
     "tags_placeholder": "Add up to 5 tags",

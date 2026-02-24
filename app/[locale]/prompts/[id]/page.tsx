@@ -10,6 +10,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { CopyPromptButton } from '@/components/prompts/CopyPromptButton';
 import { TranslateButton } from '@/components/prompts/TranslateButton';
+import { ReportButton } from '@/components/prompts/ReportButton';
 import { CATEGORY_LABELS, formatDate } from '@/lib/utils';
 import { Eye, ExternalLink, Tag } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -172,6 +173,9 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
           <div className="flex items-center gap-3 mb-8 pb-6 border-b border-gray-200 mt-6">
             <LikeButton promptId={p._id.toString()} initialCount={p.likeCount} locale={locale} />
             <BookmarkButton promptId={p._id.toString()} locale={locale} />
+            <div className="ml-auto">
+              <ReportButton promptId={p._id.toString()} />
+            </div>
           </div>
 
           {/* Ad banner */}
