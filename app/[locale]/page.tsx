@@ -3,19 +3,27 @@ import { connectDB } from '@/lib/mongodb';
 import Prompt from '@/models/Prompt';
 import { PromptCard } from '@/components/prompts/PromptCard';
 import { AdBanner } from '@/components/ads/AdBanner';
-import { Zap, TrendingUp, Clock } from 'lucide-react';
+import { ArrowRight, Sparkles, Zap, Globe, Users, TrendingUp, Shield } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-const AI_TOOLS = ['chatgpt', 'claude', 'gemini', 'midjourney', 'dalle', 'stable-diffusion', 'copilot', 'perplexity'];
-const AI_TOOL_LABELS: Record<string, string> = {
-  chatgpt: 'ChatGPT', claude: 'Claude', gemini: 'Gemini', midjourney: 'Midjourney',
-  dalle: 'DALL-E', 'stable-diffusion': 'Stable Diffusion', copilot: 'Copilot', perplexity: 'Perplexity',
-};
-const AI_TOOL_COLORS: Record<string, string> = {
-  chatgpt: 'bg-green-500', claude: 'bg-orange-500', gemini: 'bg-blue-500', midjourney: 'bg-purple-500',
-  dalle: 'bg-teal-500', 'stable-diffusion': 'bg-pink-500', copilot: 'bg-indigo-500', perplexity: 'bg-cyan-500',
-};
+const AI_TOOLS = [
+  { id: 'chatgpt', label: 'ChatGPT', color: 'from-emerald-400 to-teal-500', bg: 'bg-emerald-50', text: 'text-emerald-700' },
+  { id: 'claude', label: 'Claude', color: 'from-orange-400 to-amber-500', bg: 'bg-orange-50', text: 'text-orange-700' },
+  { id: 'gemini', label: 'Gemini', color: 'from-blue-400 to-indigo-500', bg: 'bg-blue-50', text: 'text-blue-700' },
+  { id: 'midjourney', label: 'Midjourney', color: 'from-purple-400 to-violet-500', bg: 'bg-purple-50', text: 'text-purple-700' },
+  { id: 'dalle', label: 'DALL-E', color: 'from-teal-400 to-cyan-500', bg: 'bg-teal-50', text: 'text-teal-700' },
+  { id: 'stable-diffusion', label: 'Stable Diffusion', color: 'from-pink-400 to-rose-500', bg: 'bg-pink-50', text: 'text-pink-700' },
+  { id: 'copilot', label: 'Copilot', color: 'from-indigo-400 to-blue-500', bg: 'bg-indigo-50', text: 'text-indigo-700' },
+  { id: 'perplexity', label: 'Perplexity', color: 'from-cyan-400 to-sky-500', bg: 'bg-cyan-50', text: 'text-cyan-700' },
+];
+
+const FEATURES = [
+  { icon: Sparkles, title: 'Curated Quality', desc: 'Every prompt is crafted and tested by AI enthusiasts worldwide.' },
+  { icon: Globe, title: '6 Languages', desc: 'Explore prompts in English, Korean, Japanese, Chinese, Spanish, and French.' },
+  { icon: Zap, title: 'Instant Results', desc: 'Copy any prompt with one click and get stunning AI outputs immediately.' },
+  { icon: Shield, title: 'Community Driven', desc: 'Likes, comments, and bookmarks help surface the best prompts for you.' },
+];
 
 function serializePrompt(prompt: any) {
   return {
@@ -35,103 +43,222 @@ async function getFeaturedPrompts() {
       Prompt.find({ status: 'active' }).sort({ createdAt: -1 }).limit(8).lean(),
       Prompt.find({ status: 'active' }).sort({ likeCount: -1 }).limit(4).lean(),
     ]);
-    return {
-      latest: latest.map(serializePrompt),
-      popular: popular.map(serializePrompt),
-    };
+    const total = await Prompt.countDocuments({ status: 'active' });
+    return { latest: latest.map(serializePrompt), popular: popular.map(serializePrompt), total };
   } catch {
-    return { latest: [], popular: [] };
+    return { latest: [], popular: [], total: 0 };
   }
 }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const { latest, popular } = await getFeaturedPrompts();
+  const { latest, popular, total } = await getFeaturedPrompts();
 
   return (
-    <div>
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-indigo-600 to-purple-700 text-white py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Discover the Best AI Prompts
+    <div className="min-h-screen">
+
+      {/* ─── HERO ─── */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900">
+        {/* Dot pattern overlay */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="dot-pattern w-full h-full" />
+        </div>
+        {/* Glow blobs */}
+        <div className="absolute top-20 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-violet-600/20 rounded-full blur-3xl" />
+
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-28 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 text-sm font-medium mb-8 backdrop-blur-sm">
+            <Sparkles size={14} className="text-indigo-300" />
+            The #1 AI Prompt Community
+          </div>
+
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-tight tracking-tight mb-6">
+            Discover AI Prompts
+            <span className="block mt-2 bg-gradient-to-r from-indigo-300 via-violet-300 to-purple-300 bg-clip-text text-transparent">
+              That Actually Work
+            </span>
           </h1>
-          <p className="text-xl text-indigo-100 mb-8">
-            Share, explore, and get inspired by thousands of prompts for ChatGPT, Claude, Midjourney and more.
+
+          <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Share, explore, and get inspired by thousands of battle-tested prompts
+            for ChatGPT, Claude, Midjourney and more.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href={`/${locale}/prompts`}
-              className="px-8 py-3 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors"
+              className="group flex items-center justify-center gap-2 px-8 py-4 bg-indigo-500 hover:bg-indigo-400 text-white font-semibold rounded-xl transition-all shadow-lg shadow-indigo-900/50 text-base"
             >
               Browse Prompts
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               href={`/${locale}/prompts/new`}
-              className="px-8 py-3 bg-indigo-500 text-white rounded-xl font-semibold hover:bg-indigo-400 border border-indigo-400 transition-colors"
+              className="flex items-center justify-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all backdrop-blur-sm text-base"
             >
-              Submit Prompt
+              Share Your Prompt
             </Link>
+          </div>
+
+          {/* Stats */}
+          <div className="flex items-center justify-center gap-8 mt-14 pt-8 border-t border-white/10">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-white">{total > 0 ? `${total}+` : '10K+'}</div>
+              <div className="text-xs text-slate-500 mt-0.5">Prompts</div>
+            </div>
+            <div className="w-px h-8 bg-white/10" />
+            <div className="text-center">
+              <div className="text-2xl font-bold text-white">8</div>
+              <div className="text-xs text-slate-500 mt-0.5">AI Tools</div>
+            </div>
+            <div className="w-px h-8 bg-white/10" />
+            <div className="text-center">
+              <div className="text-2xl font-bold text-white">6</div>
+              <div className="text-xs text-slate-500 mt-0.5">Languages</div>
+            </div>
+            <div className="w-px h-8 bg-white/10" />
+            <div className="text-center">
+              <div className="text-2xl font-bold text-white">Free</div>
+              <div className="text-xs text-slate-500 mt-0.5">Forever</div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* AdBanner - Top */}
-      <div className="max-w-7xl mx-auto px-4 pt-6">
+      {/* ─── AD ─── */}
+      <div className="max-w-7xl mx-auto px-4 pt-8">
         <AdBanner adSlot="1234567890" adFormat="horizontal" />
       </div>
 
-      {/* Explore by AI Tool */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Explore by AI Tool</h2>
+      {/* ─── AI TOOLS ─── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl font-bold text-slate-900">Explore by AI Tool</h2>
+          <p className="text-slate-500 mt-2 text-sm">Find prompts optimized for your favorite AI</p>
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {AI_TOOLS.map((tool) => (
             <Link
-              key={tool}
-              href={`/${locale}/prompts?aiTool=${tool}`}
-              className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-sm transition-all"
+              key={tool.id}
+              href={`/${locale}/prompts?aiTool=${tool.id}`}
+              className={`group flex items-center gap-3 p-4 rounded-2xl border border-slate-200 hover:border-transparent hover:shadow-lg transition-all duration-200 ${tool.bg}`}
             >
-              <div className={`w-3 h-3 rounded-full ${AI_TOOL_COLORS[tool]}`} />
-              <span className="font-medium text-gray-700">{AI_TOOL_LABELS[tool]}</span>
+              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${tool.color} shadow-sm shrink-0`} />
+              <span className={`font-semibold text-sm ${tool.text}`}>{tool.label}</span>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Popular Prompts */}
+      {/* ─── POPULAR PROMPTS ─── */}
       {popular.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-          <div className="flex items-center gap-2 mb-6">
-            <TrendingUp className="text-indigo-600" size={24} />
-            <h2 className="text-2xl font-bold text-gray-900">Most Popular</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {popular.map((prompt: any) => (
-              <PromptCard key={prompt._id} prompt={prompt} locale={locale} />
-            ))}
+        <section className="bg-slate-50 py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <TrendingUp size={18} className="text-indigo-500" />
+                  <span className="text-xs font-semibold text-indigo-500 uppercase tracking-wider">Trending</span>
+                </div>
+                <h2 className="text-2xl font-bold text-slate-900">Most Popular</h2>
+              </div>
+              <Link href={`/${locale}/prompts?sort=popular`} className="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+                View all <ArrowRight size={14} />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {popular.map((prompt: any) => (
+                <PromptCard key={prompt._id} prompt={prompt} locale={locale} />
+              ))}
+            </div>
           </div>
         </section>
       )}
 
-      {/* Latest Prompts */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <Clock className="text-indigo-600" size={24} />
-            <h2 className="text-2xl font-bold text-gray-900">Latest Prompts</h2>
+      {/* ─── LATEST PROMPTS ─── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles size={18} className="text-violet-500" />
+              <span className="text-xs font-semibold text-violet-500 uppercase tracking-wider">Fresh</span>
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900">Latest Prompts</h2>
           </div>
-          <Link href={`/${locale}/prompts`} className="text-indigo-600 hover:underline text-sm font-medium">
-            View All →
+          <Link href={`/${locale}/prompts`} className="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+            View all <ArrowRight size={14} />
           </Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {latest.map((prompt: any) => (
-            <PromptCard key={prompt._id} prompt={prompt} locale={locale} />
-          ))}
+        {latest.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {latest.map((prompt: any) => (
+              <PromptCard key={prompt._id} prompt={prompt} locale={locale} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20 text-slate-400">
+            <Sparkles size={40} className="mx-auto mb-4 opacity-30" />
+            <p>No prompts yet. Be the first to share!</p>
+            <Link href={`/${locale}/prompts/new`} className="mt-4 inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors">
+              Submit Prompt
+            </Link>
+          </div>
+        )}
+      </section>
+
+      {/* ─── FEATURES ─── */}
+      <section className="bg-gradient-to-br from-slate-900 to-indigo-950 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl font-bold text-white mb-3">Why PromptAll?</h2>
+            <p className="text-slate-400 text-base max-w-xl mx-auto">The smartest way to unlock the full potential of AI tools</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {FEATURES.map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                <div className="w-11 h-11 rounded-xl bg-indigo-500/20 flex items-center justify-center mb-4">
+                  <Icon size={22} className="text-indigo-300" />
+                </div>
+                <h3 className="font-semibold text-white mb-2">{title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Bottom Ad */}
+      {/* ─── CTA ─── */}
+      <section className="max-w-4xl mx-auto px-4 py-20 text-center">
+        <div className="relative rounded-3xl bg-gradient-to-br from-indigo-600 to-violet-600 p-12 overflow-hidden shadow-2xl shadow-indigo-200">
+          <div className="absolute inset-0 opacity-10">
+            <div className="dot-pattern w-full h-full" />
+          </div>
+          <div className="relative">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white/90 text-xs font-medium mb-5">
+              <Users size={12} /> Join the community
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4 leading-tight">
+              Start sharing your prompts today
+            </h2>
+            <p className="text-indigo-100 mb-8 text-base max-w-xl mx-auto">
+              Help others discover powerful AI techniques. Build your reputation as an AI prompt creator.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href={`/${locale}/auth/signup`}
+                className="px-8 py-3.5 bg-white text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition-colors shadow-lg">
+                Get Started — It's Free
+              </Link>
+              <Link href={`/${locale}/prompts`}
+                className="px-8 py-3.5 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 border border-white/20 transition-colors">
+                Explore Prompts
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── BOTTOM AD ─── */}
       <div className="max-w-7xl mx-auto px-4 pb-12">
         <AdBanner adSlot="0987654321" />
       </div>

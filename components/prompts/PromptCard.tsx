@@ -2,10 +2,16 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { Heart, MessageCircle, Copy, Bookmark } from 'lucide-react';
+import { Heart, MessageCircle, Copy, Zap } from 'lucide-react';
 import { AI_TOOL_LABELS, AI_TOOL_COLORS, CATEGORY_LABELS, formatDate } from '@/lib/utils';
 import { useState } from 'react';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
+
+const AI_TOOL_DOT: Record<string, string> = {
+  chatgpt: 'bg-emerald-400', claude: 'bg-orange-400', gemini: 'bg-blue-400',
+  midjourney: 'bg-purple-400', dalle: 'bg-teal-400', 'stable-diffusion': 'bg-pink-400',
+  copilot: 'bg-indigo-400', perplexity: 'bg-cyan-400', other: 'bg-gray-400',
+};
 
 interface PromptCardProps {
   prompt: {
@@ -41,55 +47,62 @@ export function PromptCard({ prompt, locale }: PromptCardProps) {
 
   return (
     <Link href={`/${locale}/prompts/${prompt.slug || prompt._id}`}>
-      <div className="bg-white rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all duration-200 overflow-hidden group">
-        {/* Result image */}
-        {prompt.resultImages?.[0] && (
+      <div className="card-hover bg-white rounded-2xl border border-slate-200/80 overflow-hidden group h-full flex flex-col">
+
+        {/* Result image or gradient header */}
+        {prompt.resultImages?.[0] ? (
           <div className="aspect-video relative overflow-hidden">
             <Image
-              src={prompt.resultImages?.[0] ?? ''}
+              src={prompt.resultImages[0]}
               alt={prompt.title}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           </div>
+        ) : (
+          <div className="h-2 bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500" />
         )}
 
-        <div className="p-4">
+        <div className="p-5 flex flex-col flex-1">
           {/* Badges */}
-          <div className="flex items-center gap-2 mb-2">
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${AI_TOOL_COLORS[prompt.aiTool] || 'bg-gray-100 text-gray-800'}`}>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
+              <span className={`w-1.5 h-1.5 rounded-full ${AI_TOOL_DOT[prompt.aiTool] || 'bg-gray-400'}`} />
               {AI_TOOL_LABELS[prompt.aiTool] || prompt.aiTool}
             </span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600">
               {CATEGORY_LABELS[prompt.category] || prompt.category}
             </span>
           </div>
 
           {/* Title */}
-          <h3 className="font-semibold text-gray-900 line-clamp-2 mb-1 group-hover:text-indigo-600 transition-colors">
+          <h3 className="font-semibold text-slate-900 line-clamp-2 mb-2 group-hover:text-indigo-600 transition-colors leading-snug flex-1">
             {prompt.title}
           </h3>
 
           {/* Description */}
           {prompt.description && (
-            <p className="text-sm text-gray-500 line-clamp-2 mb-3">{prompt.description}</p>
+            <p className="text-sm text-slate-500 line-clamp-2 mb-3 leading-relaxed">{prompt.description}</p>
           )}
 
           {/* Footer */}
-          <div className="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-gray-100">
-            <span suppressHydrationWarning>@{prompt.authorUsername} · {formatDate(prompt.createdAt)}</span>
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1">
+          <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
+            <span className="text-xs text-slate-400" suppressHydrationWarning>
+              @{prompt.authorUsername} · {formatDate(prompt.createdAt)}
+            </span>
+            <div className="flex items-center gap-3 text-slate-400">
+              <span className="flex items-center gap-1 text-xs hover:text-rose-500 transition-colors">
                 <Heart size={12} />
                 {prompt.likeCount}
               </span>
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1 text-xs">
                 <MessageCircle size={12} />
                 {prompt.commentCount}
               </span>
               <button
                 onClick={handleCopy}
-                className="flex items-center gap-1 hover:text-indigo-600"
+                className={`flex items-center gap-1 text-xs transition-colors ${copied ? 'text-emerald-500' : 'hover:text-indigo-500'}`}
                 title={copied ? t('common.copied') : t('common.copy')}
               >
                 <Copy size={12} />
