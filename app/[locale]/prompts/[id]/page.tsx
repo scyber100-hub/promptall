@@ -48,14 +48,28 @@ export async function generateMetadata({ params }: PromptDetailPageProps): Promi
   const prompt = await getPrompt(id);
   if (!prompt) return { title: 'Not Found' };
 
+  const p = prompt as any;
+  const title = `${p.title} | PromptAll`;
+  const description = p.description || p.content.slice(0, 160);
+  const ogImage = p.resultImages?.[0]
+    ? [{ url: p.resultImages[0], width: 800, height: 500, alt: p.title }]
+    : [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'PromptAll' }];
+
   return {
-    title: `${(prompt as any).title} | PromptAll`,
-    description: (prompt as any).description || (prompt as any).content.slice(0, 160),
+    title,
+    description,
     openGraph: {
-      title: (prompt as any).title,
-      description: (prompt as any).description || (prompt as any).content.slice(0, 160),
-      images: (prompt as any).resultImages?.[0] ? [(prompt as any).resultImages[0]] : [],
+      title: p.title,
+      description,
+      images: ogImage,
       type: 'article',
+      siteName: 'PromptAll',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: p.title,
+      description,
+      images: ogImage.map((i) => i.url),
     },
   };
 }
