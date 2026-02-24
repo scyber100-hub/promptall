@@ -3,20 +3,21 @@ import { connectDB } from '@/lib/mongodb';
 import Prompt from '@/models/Prompt';
 import { PromptCard } from '@/components/prompts/PromptCard';
 import { AdBanner } from '@/components/ads/AdBanner';
+import { AIServiceIcon, AI_BRAND_COLORS } from '@/components/icons/AIServiceIcon';
 import { ArrowRight, Sparkles, Zap, Globe, Users, TrendingUp, Shield } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
 
 const AI_TOOLS = [
-  { id: 'chatgpt', label: 'ChatGPT', color: 'from-emerald-400 to-teal-500', bg: 'bg-emerald-50', text: 'text-emerald-700' },
-  { id: 'claude', label: 'Claude', color: 'from-orange-400 to-amber-500', bg: 'bg-orange-50', text: 'text-orange-700' },
-  { id: 'gemini', label: 'Gemini', color: 'from-blue-400 to-indigo-500', bg: 'bg-blue-50', text: 'text-blue-700' },
-  { id: 'midjourney', label: 'Midjourney', color: 'from-purple-400 to-violet-500', bg: 'bg-purple-50', text: 'text-purple-700' },
-  { id: 'dalle', label: 'DALL-E', color: 'from-teal-400 to-cyan-500', bg: 'bg-teal-50', text: 'text-teal-700' },
-  { id: 'stable-diffusion', label: 'Stable Diffusion', color: 'from-pink-400 to-rose-500', bg: 'bg-pink-50', text: 'text-pink-700' },
-  { id: 'copilot', label: 'Copilot', color: 'from-indigo-400 to-blue-500', bg: 'bg-indigo-50', text: 'text-indigo-700' },
-  { id: 'perplexity', label: 'Perplexity', color: 'from-cyan-400 to-sky-500', bg: 'bg-cyan-50', text: 'text-cyan-700' },
+  { id: 'chatgpt', label: 'ChatGPT' },
+  { id: 'claude', label: 'Claude' },
+  { id: 'gemini', label: 'Gemini' },
+  { id: 'midjourney', label: 'Midjourney' },
+  { id: 'dalle', label: 'DALL-E' },
+  { id: 'stable-diffusion', label: 'Stable Diffusion' },
+  { id: 'copilot', label: 'Copilot' },
+  { id: 'perplexity', label: 'Perplexity' },
 ];
 
 function serializePrompt(prompt: any) {
@@ -139,16 +140,21 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <p className="text-slate-500 mt-2 text-sm">{t('explore_ai_subtitle')}</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {AI_TOOLS.map((tool) => (
-            <Link
-              key={tool.id}
-              href={`/${locale}/prompts?aiTool=${tool.id}`}
-              className={`group flex items-center gap-3 p-4 rounded-2xl border border-slate-200 hover:border-transparent hover:shadow-lg transition-all duration-200 ${tool.bg}`}
-            >
-              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${tool.color} shadow-sm shrink-0`} />
-              <span className={`font-semibold text-sm ${tool.text}`}>{tool.label}</span>
-            </Link>
-          ))}
+          {AI_TOOLS.map((tool) => {
+            const colors = AI_BRAND_COLORS[tool.id] || AI_BRAND_COLORS.other;
+            return (
+              <Link
+                key={tool.id}
+                href={`/${locale}/prompts?aiTool=${tool.id}`}
+                className={`group flex items-center gap-3 p-4 rounded-2xl border hover:shadow-lg transition-all duration-200 ${colors.bg} ${colors.border} border`}
+              >
+                <div className="shrink-0">
+                  <AIServiceIcon tool={tool.id} size={36} />
+                </div>
+                <span className={`font-semibold text-sm ${colors.text}`}>{tool.label}</span>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
