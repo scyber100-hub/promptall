@@ -2,16 +2,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { Heart, MessageCircle, Copy, Zap } from 'lucide-react';
-import { AI_TOOL_LABELS, AI_TOOL_COLORS, CATEGORY_LABELS, formatDate } from '@/lib/utils';
+import { Heart, MessageCircle, Copy } from 'lucide-react';
+import { AI_TOOL_LABELS, CATEGORY_LABELS, formatDate } from '@/lib/utils';
+import { AIServiceIcon } from '@/components/icons/AIServiceIcon';
 import { useState } from 'react';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
-
-const AI_TOOL_DOT: Record<string, string> = {
-  chatgpt: 'bg-emerald-400', claude: 'bg-orange-400', gemini: 'bg-blue-400',
-  midjourney: 'bg-purple-400', dalle: 'bg-teal-400', 'stable-diffusion': 'bg-pink-400',
-  copilot: 'bg-indigo-400', perplexity: 'bg-cyan-400', other: 'bg-gray-400',
-};
 
 interface PromptCardProps {
   prompt: {
@@ -68,7 +63,7 @@ export function PromptCard({ prompt, locale }: PromptCardProps) {
           {/* Badges */}
           <div className="flex items-center gap-2 mb-3">
             <span className="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
-              <span className={`w-1.5 h-1.5 rounded-full ${AI_TOOL_DOT[prompt.aiTool] || 'bg-gray-400'}`} />
+              <AIServiceIcon tool={prompt.aiTool} size={14} />
               {AI_TOOL_LABELS[prompt.aiTool] || prompt.aiTool}
             </span>
             <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600">

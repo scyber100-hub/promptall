@@ -5,11 +5,13 @@ import { LikeButton } from '@/components/social/LikeButton';
 import { BookmarkButton } from '@/components/social/BookmarkButton';
 import { CommentSection } from '@/components/social/CommentSection';
 import { AdBanner } from '@/components/ads/AdBanner';
+import { AIServiceIcon, AI_BRAND_COLORS } from '@/components/icons/AIServiceIcon';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CopyPromptButton } from '@/components/prompts/CopyPromptButton';
-import { AI_TOOL_LABELS, AI_TOOL_COLORS, CATEGORY_LABELS, formatDate } from '@/lib/utils';
-import { Eye, Copy } from 'lucide-react';
+import { TranslateButton } from '@/components/prompts/TranslateButton';
+import { CATEGORY_LABELS, formatDate } from '@/lib/utils';
+import { Eye, ExternalLink, Tag } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
@@ -63,6 +65,7 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
   if (!prompt) notFound();
 
   const p = prompt;
+  const brandColors = AI_BRAND_COLORS[p.aiTool] || AI_BRAND_COLORS.other;
 
   // Increment view count (fire and forget)
   Prompt.findByIdAndUpdate(p._id, { $inc: { viewCount: 1 } }).exec();
@@ -74,17 +77,30 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
         <div className="flex-1 min-w-0">
           {/* Header */}
           <div className="mb-6">
-            <div className="flex items-center gap-2 mb-3">
-              <span className={`text-sm px-3 py-1 rounded-full font-medium ${AI_TOOL_COLORS[p.aiTool] || 'bg-gray-100 text-gray-800'}`}>
-                {AI_TOOL_LABELS[p.aiTool] || p.aiTool}
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
+              {/* AI Tool badge with logo */}
+              <span className={`inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full font-medium border ${brandColors.bg} ${brandColors.text} ${brandColors.border}`}>
+                <AIServiceIcon tool={p.aiTool} size={16} />
+                {p.aiTool === 'chatgpt' ? 'ChatGPT'
+                  : p.aiTool === 'claude' ? 'Claude'
+                  : p.aiTool === 'gemini' ? 'Gemini'
+                  : p.aiTool === 'midjourney' ? 'Midjourney'
+                  : p.aiTool === 'dalle' ? 'DALL-E'
+                  : p.aiTool === 'stable-diffusion' ? 'Stable Diffusion'
+                  : p.aiTool === 'copilot' ? 'Copilot'
+                  : p.aiTool === 'perplexity' ? 'Perplexity'
+                  : p.aiTool}
               </span>
-              <span className="text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-600">
+              <span className="text-sm px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 font-medium">
                 {CATEGORY_LABELS[p.category] || p.category}
               </span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{p.title}</h1>
-            <div className="flex items-center gap-4 text-sm text-gray-500">
-              <Link href={`/${locale}/profile/${p.authorUsername}`} className="hover:text-indigo-600 font-medium">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">{p.title}</h1>
+            {p.description && (
+              <p className="text-gray-500 text-sm mb-3">{p.description}</p>
+            )}
+            <div className="flex items-center gap-4 text-sm text-gray-400">
+              <Link href={`/${locale}/profile/${p.authorUsername}`} className="hover:text-indigo-600 font-medium text-gray-600">
                 @{p.authorUsername}
               </Link>
               <span>{formatDate(p.createdAt)}</span>
@@ -93,16 +109,38 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
           </div>
 
           {/* Prompt Content */}
-          <div className="bg-gray-900 rounded-xl p-6 mb-6 relative">
-            <pre className="text-gray-100 text-sm whitespace-pre-wrap font-mono leading-relaxed pr-16">
+          <div className="bg-slate-900 rounded-xl p-6 mb-4 relative">
+            <pre className="text-slate-100 text-sm whitespace-pre-wrap font-mono leading-relaxed pr-16">
               {p.content}
             </pre>
             <CopyPromptButton promptId={p._id.toString()} content={p.content} locale={locale} />
           </div>
 
+          {/* Translate button */}
+          <TranslateButton content={p.content} locale={locale} />
+
+          {/* Result Link */}
+          {p.resultLink && (
+            <div className="mt-6 mb-4 p-4 bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-200 rounded-xl flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold text-indigo-800">View AI Result</p>
+                <p className="text-xs text-indigo-500 mt-0.5 truncate max-w-xs">{p.resultLink}</p>
+              </div>
+              <a
+                href={p.resultLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+              >
+                <ExternalLink size={14} />
+                Open
+              </a>
+            </div>
+          )}
+
           {/* Result Images */}
           {p.resultImages.length > 0 && (
-            <div className="mb-6">
+            <div className="mt-6 mb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-3">Result</h2>
               <div className="grid grid-cols-1 gap-4">
                 {p.resultImages.map((img: string, idx: number) => (
@@ -122,7 +160,7 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
 
           {/* Result Text */}
           {p.resultText && (
-            <div className="mb-6">
+            <div className="mt-6 mb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-3">Result Text</h2>
               <div className="bg-white border border-gray-200 rounded-xl p-4">
                 <p className="text-gray-700 whitespace-pre-wrap text-sm leading-relaxed">{p.resultText}</p>
@@ -131,7 +169,7 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
           )}
 
           {/* Action buttons */}
-          <div className="flex items-center gap-3 mb-8 pb-6 border-b border-gray-200">
+          <div className="flex items-center gap-3 mb-8 pb-6 border-b border-gray-200 mt-6">
             <LikeButton promptId={p._id.toString()} initialCount={p.likeCount} locale={locale} />
             <BookmarkButton promptId={p._id.toString()} locale={locale} />
           </div>
@@ -150,7 +188,9 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
           {/* Tags */}
           {p.tags.length > 0 && (
             <div className="bg-white border border-gray-200 rounded-xl p-4">
-              <h3 className="font-semibold text-gray-900 mb-3">Tags</h3>
+              <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-1.5">
+                <Tag size={14} className="text-gray-400" /> Tags
+              </h3>
               <div className="flex flex-wrap gap-2">
                 {p.tags.map((tag: string) => (
                   <Link

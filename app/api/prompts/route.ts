@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     await connectDB();
 
     const body = await req.json();
-    const { title, content, description, aiTool, category, tags, resultText, resultImages } = body;
+    const { title, content, description, aiTool, category, tags, resultText, resultImages, resultLink } = body;
 
     if (!title || !content || !aiTool || !category) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -89,6 +89,7 @@ export async function POST(req: NextRequest) {
       tags: tags || [],
       resultText,
       resultImages: resultImages || [],
+      resultLink,
       author: userId,
       authorName: user.name,
       authorUsername: user.username,

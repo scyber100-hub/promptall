@@ -18,6 +18,7 @@ export interface IPrompt extends Document {
   tags: string[];
   resultText?: string;
   resultImages: string[];
+  resultLink?: string;
   author: mongoose.Types.ObjectId;
   authorName: string;
   authorUsername: string;
@@ -49,6 +50,7 @@ const PromptSchema = new Schema<IPrompt>(
     tags: { type: [String], default: [] },
     resultText: { type: String, maxlength: 3000 },
     resultImages: { type: [String], default: [] },
+    resultLink: { type: String, maxlength: 500 },
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     authorName: { type: String, required: true },
     authorUsername: { type: String, required: true },

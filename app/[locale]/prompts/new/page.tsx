@@ -18,7 +18,7 @@ export default function NewPromptPage({ params }: { params: Promise<{ locale: st
   const [form, setForm] = useState({
     title: '', content: '', description: '',
     aiTool: 'chatgpt', category: 'writing',
-    tags: '', resultText: '',
+    tags: '', resultText: '', resultLink: '',
   });
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -162,6 +162,16 @@ export default function NewPromptPage({ params }: { params: Promise<{ locale: st
             placeholder={t('prompts.result_text_placeholder')}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm resize-y"
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('prompts.result_link_label')}</label>
+          <input
+            name="resultLink" value={form.resultLink} onChange={handleChange} maxLength={500}
+            placeholder={t('prompts.result_link_placeholder')}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          <p className="text-xs text-gray-400 mt-1">{t('prompts.result_link_hint')}</p>
         </div>
 
         <div>
