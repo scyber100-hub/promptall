@@ -26,7 +26,7 @@ export default function OGImage() {
           left: '200px',
           width: '400px',
           height: '400px',
-          background: 'rgba(99, 102, 241, 0.18)',
+          background: 'rgba(139, 92, 246, 0.2)',
           borderRadius: '50%',
           filter: 'blur(80px)',
         }}
@@ -38,7 +38,7 @@ export default function OGImage() {
           right: '180px',
           width: '340px',
           height: '340px',
-          background: 'rgba(124, 58, 237, 0.15)',
+          background: 'rgba(109, 40, 217, 0.18)',
           borderRadius: '50%',
           filter: 'blur(80px)',
         }}
@@ -49,37 +49,41 @@ export default function OGImage() {
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '20px',
+          gap: '24px',
           marginBottom: '28px',
         }}
       >
+        {/* Icon box */}
         <div
           style={{
-            background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
-            width: '80px',
-            height: '80px',
-            borderRadius: '20px',
+            background: 'linear-gradient(145deg, #8b5cf6 0%, #6d28d9 100%)',
+            width: '88px',
+            height: '88px',
+            borderRadius: '22px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 40px rgba(99,102,241,0.5)',
+            boxShadow: '0 0 48px rgba(139,92,246,0.55)',
           }}
         >
-          <span
-            style={{
-              color: 'white',
-              fontSize: '48px',
-              fontWeight: '800',
-              fontFamily: 'sans-serif',
-            }}
-          >
-            P
-          </span>
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M10 3.5 L11.6 8.9 L17 10.5 L11.6 12.1 L10 17.5 L8.4 12.1 L3 10.5 L8.4 8.9 Z"
+              fill="white"
+            />
+            <path
+              d="M18.5 2.5 L19.3 4.7 L21.5 5.5 L19.3 6.3 L18.5 8.5 L17.7 6.3 L15.5 5.5 L17.7 4.7 Z"
+              fill="white"
+            />
+            <circle cx="20.5" cy="13" r="1" fill="white" opacity="0.75" />
+          </svg>
         </div>
+
+        {/* Wordmark */}
         <span
           style={{
             color: 'white',
-            fontSize: '64px',
+            fontSize: '68px',
             fontWeight: '800',
             letterSpacing: '-2px',
             fontFamily: 'sans-serif',
@@ -130,7 +134,7 @@ export default function OGImage() {
         ))}
       </div>
 
-      {/* URL tag */}
+      {/* URL */}
       <p
         style={{
           position: 'absolute',
