@@ -46,7 +46,7 @@ export function Header({ locale }: HeaderProps) {
                 <circle cx="20.5" cy="13" r="1" fill="white" opacity="0.75" />
               </svg>
             </div>
-            <span className="text-lg font-bold text-slate-900 tracking-tight">PromptAll</span>
+            <span className="text-lg font-bold text-slate-900 tracking-tight" style={{ fontFamily: 'var(--font-logo)' }}>PromptAll</span>
           </Link>
 
           {/* Desktop Nav */}

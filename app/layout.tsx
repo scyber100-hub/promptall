@@ -1,8 +1,13 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-logo',
+  weight: ['700'],
+});
 
 const BASE_URL = 'https://promptall.net';
 
@@ -68,7 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </>
         )}
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.className} ${spaceGrotesk.variable}`}>{children}</body>
     </html>
   );
 }
