@@ -3,6 +3,7 @@ import User from '@/models/User';
 import Prompt from '@/models/Prompt';
 import { notFound } from 'next/navigation';
 import { PromptCard } from '@/components/prompts/PromptCard';
+import { FollowButton } from '@/components/social/FollowButton';
 import { formatDate } from '@/lib/utils';
 import Image from 'next/image';
 import { CalendarDays, FileText } from 'lucide-react';
@@ -62,9 +63,14 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           )}
         </div>
         <div className="flex-1">
-          <h1 className="text-xl font-bold text-gray-900">{u.name}</h1>
-          <p className="text-gray-500 text-sm">@{u.username}</p>
-          {u.bio && <p className="text-gray-600 text-sm mt-2">{u.bio}</p>}
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">{u.name}</h1>
+              <p className="text-gray-500 text-sm">@{u.username}</p>
+            </div>
+            <FollowButton username={u.username} targetUserId={u._id} />
+          </div>
+          {u.bio && <p className="text-gray-600 text-sm mt-2 mt-2">{u.bio}</p>}
           <div className="flex items-center gap-4 mt-3 text-sm text-gray-400">
             <span className="flex items-center gap-1">
               <CalendarDays size={14} />

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { connectDB } from '@/lib/mongodb';
 import User from '@/models/User';
+import { sendVerificationEmail } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
   try {
@@ -31,6 +33,9 @@ export async function POST(req: NextRequest) {
       username = `${baseUsername}${counter}`;
     }
 
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
     await User.create({
       name,
       username,
@@ -38,7 +43,14 @@ export async function POST(req: NextRequest) {
       password: hashedPassword,
       provider: 'email',
       role: 'user',
+      verificationToken,
+      verificationExpires,
     });
+
+    // Fire-and-forget: don't fail signup if email fails
+    sendVerificationEmail(email.toLowerCase(), verificationToken).catch((err) =>
+      console.error('Failed to send verification email:', err)
+    );
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {

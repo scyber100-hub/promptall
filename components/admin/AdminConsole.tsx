@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Bell, BellOff, Check } from 'lucide-react';
 
 interface AdminPrompt {
   _id: string;
@@ -38,11 +39,47 @@ const STATUS_BADGE: Record<string, string> = {
   admin: 'bg-indigo-100 text-indigo-800',
 };
 
+interface Notification {
+  _id: string;
+  type: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+}
+
 export function AdminConsole({ initialPrompts, initialUsers }: AdminConsoleProps) {
-  const [tab, setTab] = useState<'prompts' | 'users'>('prompts');
+  const [tab, setTab] = useState<'prompts' | 'users' | 'notifications'>('prompts');
   const [prompts, setPrompts] = useState<AdminPrompt[]>(initialPrompts);
   const [users, setUsers] = useState<AdminUser[]>(initialUsers);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/admin/notifications?unread=true')
+      .then((r) => r.json())
+      .then((d) => {
+        setUnreadCount(d.unreadCount ?? 0);
+      })
+      .catch(() => {});
+  }, []);
+
+  const loadNotifications = async () => {
+    const res = await fetch('/api/admin/notifications');
+    const d = await res.json();
+    setNotifications(d.notifications ?? []);
+    setUnreadCount(0);
+  };
+
+  const markAllRead = async () => {
+    await fetch('/api/admin/notifications', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids: 'all' }),
+    });
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    setUnreadCount(0);
+  };
 
   const updatePromptStatus = async (id: string, status: 'active' | 'hidden' | 'deleted') => {
     setLoadingId(id);
@@ -92,14 +129,28 @@ export function AdminConsole({ initialPrompts, initialUsers }: AdminConsoleProps
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Admin Console</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Admin Console</h1>
+        <button
+          onClick={() => { setTab('notifications'); loadNotifications(); }}
+          className="relative p-2 rounded-lg hover:bg-gray-100 text-gray-500"
+          title="Notifications"
+        >
+          <Bell size={20} />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          )}
+        </button>
+      </div>
 
       {/* Tabs */}
       <div className="flex gap-1 mb-6 border-b border-gray-200">
-        {(['prompts', 'users'] as const).map((t) => (
+        {(['prompts', 'users', 'notifications'] as const).map((t) => (
           <button
             key={t}
-            onClick={() => setTab(t)}
+            onClick={() => { setTab(t); if (t === 'notifications') loadNotifications(); }}
             className={`px-4 py-2 text-sm font-medium capitalize border-b-2 -mb-px transition-colors ${
               tab === t
                 ? 'border-indigo-600 text-indigo-600'
@@ -107,6 +158,11 @@ export function AdminConsole({ initialPrompts, initialUsers }: AdminConsoleProps
             }`}
           >
             {t}
+            {t === 'notifications' && unreadCount > 0 && (
+              <span className="ml-1.5 inline-flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -259,6 +315,43 @@ export function AdminConsole({ initialPrompts, initialUsers }: AdminConsoleProps
           </table>
           {users.length === 0 && (
             <p className="text-center text-gray-400 py-8">No users found</p>
+          )}
+        </div>
+      )}
+
+      {/* Notifications Tab */}
+      {tab === 'notifications' && (
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm text-gray-500">{notifications.length} notifications</p>
+            {notifications.some((n) => !n.read) && (
+              <button
+                onClick={markAllRead}
+                className="flex items-center gap-1 text-xs text-indigo-600 hover:underline"
+              >
+                <Check size={12} /> Mark all as read
+              </button>
+            )}
+          </div>
+          {notifications.length === 0 ? (
+            <div className="text-center py-12 text-gray-400">
+              <BellOff size={36} className="mx-auto mb-3 opacity-30" />
+              <p>No notifications</p>
+            </div>
+          ) : (
+            <ul className="divide-y divide-gray-100">
+              {notifications.map((n) => (
+                <li key={n._id} className={`py-3 flex gap-3 ${n.read ? 'opacity-60' : ''}`}>
+                  <span className={`mt-1 w-2 h-2 rounded-full shrink-0 ${n.read ? 'bg-gray-300' : 'bg-indigo-500'}`} />
+                  <div>
+                    <p className="text-sm text-gray-800">{n.message}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {new Date(n.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       )}

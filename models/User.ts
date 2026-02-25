@@ -13,6 +13,8 @@ export interface IUser extends Document {
   status: 'active' | 'suspended';
   promptCount: number;
   likeCount: number;
+  verificationToken?: string;
+  verificationExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,6 +33,8 @@ const UserSchema = new Schema<IUser>(
     status: { type: String, enum: ['active', 'suspended'], default: 'active' },
     promptCount: { type: Number, default: 0 },
     likeCount: { type: Number, default: 0 },
+    verificationToken: { type: String },
+    verificationExpires: { type: Date },
   },
   { timestamps: true }
 );

@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { connectDB } from '@/lib/mongodb';
 import Report from '@/models/Report';
 import Prompt from '@/models/Prompt';
+import Notification from '@/models/Notification';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -48,6 +49,19 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     // 신고 5회 이상이면 자동 숨김
     if (updatedPrompt && updatedPrompt.reportCount >= 5 && updatedPrompt.status === 'active') {
       await Prompt.findByIdAndUpdate(id, { status: 'hidden' });
+      // Admin notification: prompt auto-hidden
+      Notification.create({
+        type: 'prompt_hidden',
+        message: `Prompt "${updatedPrompt.title}" was auto-hidden after ${updatedPrompt.reportCount} reports.`,
+        data: { promptId: id, title: updatedPrompt.title, reportCount: updatedPrompt.reportCount },
+      }).catch(() => {});
+    } else if (updatedPrompt && updatedPrompt.reportCount === 3) {
+      // Admin notification: prompt reaching report threshold
+      Notification.create({
+        type: 'high_report',
+        message: `Prompt "${updatedPrompt.title}" has received ${updatedPrompt.reportCount} reports.`,
+        data: { promptId: id, title: updatedPrompt.title, reportCount: updatedPrompt.reportCount },
+      }).catch(() => {});
     }
 
     return NextResponse.json({ success: true });

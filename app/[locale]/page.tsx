@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { connectDB } from '@/lib/mongodb';
 import Prompt from '@/models/Prompt';
 import { PromptCard } from '@/components/prompts/PromptCard';
+import { FollowingFeed } from '@/components/home/FollowingFeed';
 import { AdBanner } from '@/components/ads/AdBanner';
 import { AIServiceIcon, AI_BRAND_COLORS } from '@/components/icons/AIServiceIcon';
 import {
@@ -232,6 +233,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
         </section>
       )}
+
+      {/* ─── FOLLOWING FEED (client, shown only when logged in) ─── */}
+      <FollowingFeed locale={locale} />
 
       {/* ─── LATEST PROMPTS ─── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

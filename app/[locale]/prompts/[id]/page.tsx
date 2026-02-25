@@ -83,12 +83,41 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
 
   const p = prompt;
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: p.title,
+    description: p.description || (p as any).content?.slice(0, 160),
+    author: {
+      '@type': 'Person',
+      name: p.authorName,
+      url: `https://promptall.net/${locale}/profile/${p.authorUsername}`,
+    },
+    datePublished: p.createdAt,
+    dateModified: p.updatedAt,
+    image: (p as any).resultImages?.[0] || 'https://promptall.net/opengraph-image',
+    publisher: {
+      '@type': 'Organization',
+      name: 'PromptAll',
+      url: 'https://promptall.net',
+    },
+    interactionStatistic: [
+      { '@type': 'InteractionCounter', interactionType: 'https://schema.org/LikeAction', userInteractionCount: (p as any).likeCount },
+      { '@type': 'InteractionCounter', interactionType: 'https://schema.org/ViewAction', userInteractionCount: (p as any).viewCount },
+    ],
+  };
+
   const brandColors = AI_BRAND_COLORS[p.aiTool] || AI_BRAND_COLORS.other;
 
   // Increment view count (fire and forget)
   Prompt.findByIdAndUpdate(p._id, { $inc: { viewCount: 1 } }).exec();
 
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Main content */}
@@ -249,5 +278,6 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
         </aside>
       </div>
     </div>
+    </>
   );
 }

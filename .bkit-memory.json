@@ -1,6 +1,7 @@
 {
   "feature": "promptall",
-  "phase": "completed",
-  "matchRate": 96,
-  "lastUpdated": "2026-02-24"
+  "phase": "archived",
+  "matchRate": 100,
+  "lastUpdated": "2026-02-25",
+  "archivedTo": "docs/archive/2026-02/promptall/"
 }
