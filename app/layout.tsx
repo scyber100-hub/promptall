@@ -47,7 +47,8 @@ export const metadata: Metadata = {
     creator: '@promptall',
   },
   icons: {
-    icon: '/icon',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
     apple: '/apple-icon',
   },
   alternates: {

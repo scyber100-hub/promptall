@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useSession, signOut } from 'next-auth/react';
 import { useState } from 'react';
@@ -39,13 +40,13 @@ export function Header({ locale }: HeaderProps) {
 
           {/* Logo */}
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-violet-700 rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-violet-200 transition-shadow">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M10 3.5 L11.6 8.9 L17 10.5 L11.6 12.1 L10 17.5 L8.4 12.1 L3 10.5 L8.4 8.9 Z" fill="white" />
-                <path d="M18.5 2.5 L19.3 4.7 L21.5 5.5 L19.3 6.3 L18.5 8.5 L17.7 6.3 L15.5 5.5 L17.7 4.7 Z" fill="white" />
-                <circle cx="20.5" cy="13" r="1" fill="white" opacity="0.75" />
-              </svg>
-            </div>
+            <Image
+              src="/logo-icon.png"
+              alt="PromptAll"
+              width={32}
+              height={32}
+              className="rounded-lg shadow-sm group-hover:shadow-violet-200 transition-shadow"
+            />
             <span className="text-lg font-bold text-slate-900 tracking-tight" style={{ fontFamily: 'var(--font-logo)' }}>PromptAll</span>
           </Link>
 
@@ -117,9 +118,9 @@ export function Header({ locale }: HeaderProps) {
                         <p className="text-sm font-semibold text-slate-900">{session.user?.name}</p>
                         <p className="text-xs text-slate-400 mt-0.5">{session.user?.email}</p>
                       </div>
-                      <Link href={`/${locale}/profile/${(session.user as any).username}`} onClick={() => setUserOpen(false)}
+                      <Link href={`/${locale}/mypage`} onClick={() => setUserOpen(false)}
                         className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
-                        <User size={14} className="text-slate-400" /> My Profile
+                        <User size={14} className="text-slate-400" /> 마이페이지
                       </Link>
                       <Link href={`/${locale}/bookmarks`} onClick={() => setUserOpen(false)}
                         className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">

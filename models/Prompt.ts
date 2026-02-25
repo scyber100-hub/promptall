@@ -44,6 +44,7 @@ export interface IPrompt extends Document {
   reportCount: number;
   slug: string;
   language: string;
+  translations: Record<string, { title?: string; description?: string }>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -96,6 +97,7 @@ const PromptSchema = new Schema<IPrompt>(
     reportCount: { type: Number, default: 0 },
     slug: { type: String, required: true, unique: true },
     language: { type: String, default: 'en' },
+    translations: { type: Schema.Types.Mixed, default: {} },
   },
   { timestamps: true }
 );

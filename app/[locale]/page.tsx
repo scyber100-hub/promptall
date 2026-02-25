@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60; // revalidate every 60 seconds
 
 const AI_TOOLS = [
   { id: 'chatgpt', label: 'ChatGPT' },
@@ -36,6 +36,7 @@ function serializePrompt(prompt: any) {
     _id: prompt._id.toString(),
     author: prompt.author?.toString() ?? null,
     resultImages: prompt.resultImages ?? [],
+    translations: prompt.translations ?? {},
     createdAt: prompt.createdAt?.toISOString() ?? '',
     updatedAt: prompt.updatedAt?.toISOString() ?? '',
   };
@@ -44,15 +45,15 @@ function serializePrompt(prompt: any) {
 async function getFeaturedPrompts() {
   try {
     await connectDB();
-    const [latest, popular, typeCounts] = await Promise.all([
+    const [latest, popular, typeCounts, total] = await Promise.all([
       Prompt.find({ status: 'active' }).sort({ createdAt: -1 }).limit(8).lean(),
       Prompt.find({ status: 'active' }).sort({ likeCount: -1 }).limit(4).lean(),
       Prompt.aggregate([
         { $match: { status: 'active' } },
         { $group: { _id: '$generationType', count: { $sum: 1 } } },
       ]),
+      Prompt.countDocuments({ status: 'active' }),
     ]);
-    const total = await Prompt.countDocuments({ status: 'active' });
     const typeCountMap = Object.fromEntries(typeCounts.map((c: any) => [c._id, c.count]));
     return {
       latest: latest.map(serializePrompt),

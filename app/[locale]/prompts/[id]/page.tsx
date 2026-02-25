@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { connectDB } from '@/lib/mongodb';
 import Prompt from '@/models/Prompt';
 import { notFound } from 'next/navigation';
@@ -9,19 +10,20 @@ import { AIServiceIcon, AI_BRAND_COLORS } from '@/components/icons/AIServiceIcon
 import Image from 'next/image';
 import Link from 'next/link';
 import { CopyPromptButton } from '@/components/prompts/CopyPromptButton';
-import { TranslateButton } from '@/components/prompts/TranslateButton';
 import { ReportButton } from '@/components/prompts/ReportButton';
 import { CATEGORY_LABELS, formatDate } from '@/lib/utils';
 import { Eye, ExternalLink, Tag } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300; // revalidate every 5 minutes
 
 interface PromptDetailPageProps {
   params: Promise<{ locale: string; id: string }>;
 }
 
-async function getPrompt(id: string) {
+// React.cache() deduplicates the DB call within a single request
+// (generateMetadata and the page component both call getPrompt — now it only hits DB once)
+const getPrompt = cache(async (id: string) => {
   await connectDB();
   const raw = await Prompt.findOne({
     $or: [
@@ -41,7 +43,7 @@ async function getPrompt(id: string) {
     createdAt: p.createdAt?.toISOString() ?? '',
     updatedAt: p.updatedAt?.toISOString() ?? '',
   };
-}
+});
 
 export async function generateMetadata({ params }: PromptDetailPageProps): Promise<Metadata> {
   const { id } = await params;
@@ -80,6 +82,7 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
   if (!prompt) notFound();
 
   const p = prompt;
+
   const brandColors = AI_BRAND_COLORS[p.aiTool] || AI_BRAND_COLORS.other;
 
   // Increment view count (fire and forget)
@@ -131,9 +134,6 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
             <CopyPromptButton promptId={p._id.toString()} content={p.content} locale={locale} />
           </div>
 
-          {/* Translate button */}
-          <TranslateButton content={p.content} locale={locale} />
-
           {/* Result Link */}
           {p.resultLink && (
             <div className="mt-6 mb-4 p-4 bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-200 rounded-xl flex items-center justify-between gap-4">
@@ -165,6 +165,7 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
                       alt={`Result ${idx + 1}`}
                       width={800}
                       height={500}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 60vw, 800px"
                       className="w-full object-cover"
                     />
                   </div>

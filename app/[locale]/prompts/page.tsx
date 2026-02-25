@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
-export const dynamic = 'force-dynamic';
+// searchParams-driven pages are already dynamic — no force-dynamic needed
 
 interface SearchParamsObj {
   page?: string;
@@ -54,6 +54,7 @@ async function getPrompts(searchParams: SearchParamsObj) {
     _id: p._id.toString(),
     author: p.author?.toString() ?? null,
     resultImages: p.resultImages ?? [],
+    translations: p.translations ?? {},
     createdAt: p.createdAt?.toISOString() ?? '',
     updatedAt: p.updatedAt?.toISOString() ?? '',
   }));

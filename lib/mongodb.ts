@@ -34,10 +34,10 @@ export async function connectDB() {
     cached.promise = mongoose
       .connect(MONGODB_URI, {
         bufferCommands: false,
-        serverSelectionTimeoutMS: 5000,
-        socketTimeoutMS: 30000,
+        serverSelectionTimeoutMS: 10000,
+        socketTimeoutMS: 45000,
         maxPoolSize: 10,
-        minPoolSize: 1,
+        minPoolSize: 2,
       })
       .catch((err) => {
         cached.promise = null;

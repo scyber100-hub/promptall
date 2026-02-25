@@ -47,7 +47,9 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === 'google') {
         await connectDB();
         const existing = await User.findOne({ email: user.email });
-        if (!existing) {
+        if (existing) {
+          if (existing.status === 'suspended') return false;
+        } else {
           const baseUsername = user.email!.split('@')[0].replace(/[^a-z0-9]/gi, '').toLowerCase();
           const username = `${baseUsername}${Math.floor(Math.random() * 9999)}`;
           await User.create({

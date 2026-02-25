@@ -45,11 +45,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     }
 
     const body = await req.json();
-    const { title, content, description, aiTool, category, tags, resultText, resultImages } = body;
+    const { title, content, description, aiTool, generationType, category, tags, resultText, resultImages, resultLink } = body;
 
     const updated = await Prompt.findByIdAndUpdate(
       id,
-      { title, content, description, aiTool, category, tags, resultText, resultImages },
+      { title, content, description, aiTool, generationType, category, tags, resultText, resultImages, resultLink },
       { new: true }
     );
 

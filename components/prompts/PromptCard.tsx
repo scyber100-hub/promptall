@@ -30,6 +30,9 @@ export function PromptCard({ prompt, locale }: PromptCardProps) {
   const t = useTranslations();
   const [copied, setCopied] = useState(false);
 
+  const displayTitle = prompt.title;
+  const displayDescription = prompt.description;
+
   const handleCopy = async (e: React.MouseEvent) => {
     e.preventDefault();
     try {
@@ -51,6 +54,7 @@ export function PromptCard({ prompt, locale }: PromptCardProps) {
               src={prompt.resultImages[0]}
               alt={prompt.title}
               fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
               className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
@@ -73,12 +77,12 @@ export function PromptCard({ prompt, locale }: PromptCardProps) {
 
           {/* Title */}
           <h3 className="font-semibold text-slate-900 line-clamp-2 mb-2 group-hover:text-indigo-600 transition-colors leading-snug flex-1">
-            {prompt.title}
+            {displayTitle}
           </h3>
 
           {/* Description */}
-          {prompt.description && (
-            <p className="text-sm text-slate-500 line-clamp-2 mb-3 leading-relaxed">{prompt.description}</p>
+          {displayDescription && (
+            <p className="text-sm text-slate-500 line-clamp-2 mb-3 leading-relaxed">{displayDescription}</p>
           )}
 
           {/* Footer */}

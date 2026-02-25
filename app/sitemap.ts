@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { connectDB } from '@/lib/mongodb';
 import Prompt from '@/models/Prompt';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400; // revalidate every 24 hours
 
 const locales = ['en', 'ko', 'ja', 'zh', 'es', 'fr'];
 
