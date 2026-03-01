@@ -1,10 +1,10 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM = process.env.EMAIL_FROM || 'PromptAll <noreply@promptall.net>';
 const BASE_URL = process.env.NEXTAUTH_URL || 'https://promptall.net';
 
 export async function sendVerificationEmail(email: string, token: string, locale = 'en') {
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const verifyUrl = `${BASE_URL}/${locale}/auth/verify-email?token=${token}`;
 
   const subject = locale === 'ko' ? '[PromptAll] 이메일 인증' : '[PromptAll] Verify your email';
