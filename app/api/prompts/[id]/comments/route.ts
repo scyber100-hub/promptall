@@ -15,10 +15,21 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       parentId: parentId ? parentId : { $exists: false },
     };
 
-    const comments = await Comment.find(query)
+    const raw = await Comment.find(query)
       .sort({ createdAt: -1 })
       .limit(50)
       .lean();
+
+    const comments = raw.map((c: any) => ({
+      _id: c._id.toString(),
+      authorName: c.authorName,
+      authorUsername: c.authorUsername,
+      authorImage: c.authorImage ?? undefined,
+      content: c.content,
+      replyCount: c.replyCount ?? 0,
+      parentId: c.parentId?.toString(),
+      createdAt: c.createdAt?.toISOString() ?? '',
+    }));
 
     return NextResponse.json({ comments });
   } catch (error) {

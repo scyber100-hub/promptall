@@ -130,7 +130,51 @@
     "featured_title": "注目のプロンプト",
     "latest_title_old": "最新のプロンプト",
     "trending_title": "今トレンド",
-    "explore_by_category": "カテゴリ別に探す"
+    "explore_by_category": "カテゴリ別に探す",
+    "browse_title": "探索する",
+    "ai_tools_label": "AIツール",
+    "stats_members": "メンバー"
+  },
+  "feed": {
+    "title": "フォローフィード",
+    "empty": "フォロー中のユーザーがいません。",
+    "browse_link": "プロンプトを探す →",
+    "following_badge": "フォロー中"
+  },
+  "notifications": {
+    "title": "通知",
+    "mark_all_read": "すべて既読にする",
+    "no_notifications": "まだ通知がありません。",
+    "follow": "{name}さんがフォローしました。",
+    "like": "{name}さんが「{title}」にいいねしました。",
+    "comment": "{name}さんが「{title}」にコメントしました。",
+    "comment_reply": "{name}さんがコメントに返信しました。",
+    "just_now": "たった今",
+    "minutes_ago": "{count}分前",
+    "hours_ago": "{count}時間前",
+    "days_ago": "{count}日前"
+  },
+  "collections": {
+    "new_title": "新しいコレクション",
+    "edit_title": "コレクションを編集",
+    "title_label": "タイトル",
+    "title_placeholder": "コレクション名",
+    "description_label": "説明（任意）",
+    "description_placeholder": "このコレクションについて説明してください",
+    "public_label": "公開コレクション",
+    "create_btn": "コレクションを作成",
+    "save_btn": "保存",
+    "delete_confirm": "このコレクションを削除しますか？",
+    "add_prompt": "コレクションに追加",
+    "remove_prompt": "コレクションから削除",
+    "added": "追加しました！",
+    "removed": "削除しました",
+    "no_collections": "コレクションはまだありません。",
+    "no_prompts": "まだプロンプトがありません。",
+    "prompts_count": "{count}件のプロンプト",
+    "by_owner": "{name}さん",
+    "select_collection": "コレクションを選択",
+    "create_new": "新しいコレクションを作成"
   },
   "explore": {
     "title": "プロンプトを探索",
@@ -165,6 +209,10 @@
     "sort_latest": "新着順",
     "sort_popular": "人気順",
     "sort_trending": "トレンド",
+    "filter_type": "タイプ",
+    "filter_category": "カテゴリ",
+    "filter_ai_tool": "AIツール",
+    "filter_all": "すべて",
     "copy_prompt": "プロンプトをコピー",
     "prompt_copied": "コピーしました！",
     "likes": "{count}件のいいね",
@@ -222,7 +270,41 @@
     "no_liked": "まだいいねしたプロンプトがありません。",
     "no_bookmarks": "まだブックマークがありません。",
     "member_since": "{date}に登録",
-    "prompts_count": "{count}件のプロンプト"
+    "prompts_count": "{count}件のプロンプト",
+    "followers": "フォロワー",
+    "following": "フォロー中",
+    "followers_title": "フォロワー",
+    "following_title": "フォロー中",
+    "no_followers": "まだフォロワーがいません。",
+    "no_following": "まだフォローしているユーザーがいません。",
+    "collections_tab": "コレクション"
+  },
+  "settings": {
+    "profile_title": "プロフィール編集",
+    "back": "戻る",
+    "name_label": "名前",
+    "name_placeholder": "お名前を入力してください",
+    "username_label": "ユーザー名",
+    "username_hint": "ユーザー名は変更できません",
+    "bio_label": "自己紹介",
+    "bio_placeholder": "自己紹介を書いてください...",
+    "image_label": "プロフィール画像URL",
+    "image_placeholder": "https://example.com/avatar.jpg",
+    "image_hint": "プロフィール画像のURLを入力してください",
+    "save_btn": "保存する",
+    "saving": "保存中...",
+    "save_success": "プロフィールを更新しました！",
+    "save_error": "プロフィールの更新に失敗しました。もう一度お試しください。"
+  },
+  "search": {
+    "title": "検索結果",
+    "no_query": "キーワードを入力して検索してください。",
+    "prompts_tab": "プロンプト",
+    "users_tab": "ユーザー",
+    "no_results_prompts": "「{query}」のプロンプトが見つかりません。",
+    "no_results_users": "「{query}」のユーザーが見つかりません。",
+    "results_prompts": "{count}件のプロンプトが見つかりました",
+    "results_users": "{count}人のユーザーが見つかりました"
   },
   "errors": {
     "required": "必須項目です",
@@ -231,5 +313,13 @@
     "server_error": "エラーが発生しました。もう一度お試しください。",
     "not_found": "ページが見つかりません",
     "unauthorized": "続けるにはログインしてください"
+  },
+  "bookmarks": {
+    "title": "マイブックマーク",
+    "empty_title": "ブックマークがありません",
+    "empty_desc": "ブックマークアイコンをクリックしてお気に入りのプロンプトを保存しましょう。",
+    "browse": "プロンプトを探す",
+    "prev": "前へ",
+    "next": "次へ"
   }
 }

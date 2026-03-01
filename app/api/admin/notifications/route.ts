@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { connectDB } from '@/lib/mongodb';
-import Notification from '@/models/Notification';
+import UserNotification from '@/models/UserNotification';
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
@@ -20,12 +20,12 @@ export async function GET(req: NextRequest) {
     const unreadOnly = searchParams.get('unread') === 'true';
     const query = unreadOnly ? { read: false } : {};
 
-    const notifications = await Notification.find(query)
+    const notifications = await UserNotification.find(query)
       .sort({ createdAt: -1 })
       .limit(50)
       .lean();
 
-    const unreadCount = await Notification.countDocuments({ read: false });
+    const unreadCount = await UserNotification.countDocuments({ read: false });
     return NextResponse.json({ notifications, unreadCount });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -41,9 +41,9 @@ export async function PATCH(req: NextRequest) {
     const { ids } = await req.json();
 
     if (ids === 'all') {
-      await Notification.updateMany({}, { $set: { read: true } });
+      await UserNotification.updateMany({}, { $set: { read: true } });
     } else if (Array.isArray(ids)) {
-      await Notification.updateMany({ _id: { $in: ids } }, { $set: { read: true } });
+      await UserNotification.updateMany({ _id: { $in: ids } }, { $set: { read: true } });
     }
 
     return NextResponse.json({ success: true });

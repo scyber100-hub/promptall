@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { Heart, MessageCircle, Copy } from 'lucide-react';
+import { Heart, MessageCircle, Copy, Eye } from 'lucide-react';
 import { AI_TOOL_LABELS, CATEGORY_LABELS, formatDate } from '@/lib/utils';
 import { AIServiceIcon } from '@/components/icons/AIServiceIcon';
 import { useState } from 'react';
@@ -20,6 +20,7 @@ interface PromptCardProps {
     authorUsername: string;
     likeCount: number;
     commentCount: number;
+    viewCount: number;
     createdAt: string;
     slug: string;
   };
@@ -98,6 +99,10 @@ export function PromptCard({ prompt, locale }: PromptCardProps) {
               <span className="flex items-center gap-1 text-xs">
                 <MessageCircle size={12} />
                 {prompt.commentCount}
+              </span>
+              <span className="flex items-center gap-1 text-xs">
+                <Eye size={12} />
+                {prompt.viewCount}
               </span>
               <button
                 onClick={handleCopy}

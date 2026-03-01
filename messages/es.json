@@ -130,7 +130,51 @@
     "featured_title": "Prompts Destacados",
     "latest_title_old": "Últimos Prompts",
     "trending_title": "Tendencias",
-    "explore_by_category": "Explorar por categoría"
+    "explore_by_category": "Explorar por categoría",
+    "browse_title": "Explorar",
+    "ai_tools_label": "Herramientas AI",
+    "stats_members": "Miembros"
+  },
+  "feed": {
+    "title": "Feed de seguidos",
+    "empty": "Aún no sigues a nadie.",
+    "browse_link": "Explorar Prompts →",
+    "following_badge": "Siguiendo"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "mark_all_read": "Marcar todo como leído",
+    "no_notifications": "Aún no tienes notificaciones.",
+    "follow": "{name} te siguió.",
+    "like": "{name} le dio me gusta a \"{title}\".",
+    "comment": "{name} comentó en \"{title}\".",
+    "comment_reply": "{name} respondió a tu comentario.",
+    "just_now": "Ahora mismo",
+    "minutes_ago": "hace {count}m",
+    "hours_ago": "hace {count}h",
+    "days_ago": "hace {count}d"
+  },
+  "collections": {
+    "new_title": "Nueva colección",
+    "edit_title": "Editar colección",
+    "title_label": "Título",
+    "title_placeholder": "Nombre de la colección",
+    "description_label": "Descripción (opcional)",
+    "description_placeholder": "¿De qué trata esta colección?",
+    "public_label": "Colección pública",
+    "create_btn": "Crear colección",
+    "save_btn": "Guardar",
+    "delete_confirm": "¿Estás seguro de que quieres eliminar esta colección?",
+    "add_prompt": "Agregar a colección",
+    "remove_prompt": "Quitar de colección",
+    "added": "¡Agregado!",
+    "removed": "Quitado",
+    "no_collections": "Aún no hay colecciones.",
+    "no_prompts": "Esta colección no tiene prompts aún.",
+    "prompts_count": "{count} prompts",
+    "by_owner": "por {name}",
+    "select_collection": "Seleccionar una colección",
+    "create_new": "Crear nueva colección"
   },
   "explore": {
     "title": "Explorar Prompts",
@@ -165,6 +209,10 @@
     "sort_latest": "Más recientes",
     "sort_popular": "Más populares",
     "sort_trending": "Tendencias",
+    "filter_type": "Tipo",
+    "filter_category": "Categoría",
+    "filter_ai_tool": "Herramienta IA",
+    "filter_all": "Todo",
     "copy_prompt": "Copiar Prompt",
     "prompt_copied": "¡Prompt copiado!",
     "likes": "{count} me gusta",
@@ -222,7 +270,41 @@
     "no_liked": "Aún no tienes prompts con me gusta.",
     "no_bookmarks": "Aún no tienes guardados.",
     "member_since": "Miembro desde {date}",
-    "prompts_count": "{count} prompts"
+    "prompts_count": "{count} prompts",
+    "followers": "seguidores",
+    "following": "siguiendo",
+    "followers_title": "Seguidores",
+    "following_title": "Siguiendo",
+    "no_followers": "Aún no tienes seguidores.",
+    "no_following": "Aún no sigues a nadie.",
+    "collections_tab": "Colecciones"
+  },
+  "settings": {
+    "profile_title": "Editar Perfil",
+    "back": "Volver",
+    "name_label": "Nombre",
+    "name_placeholder": "Tu nombre",
+    "username_label": "Nombre de usuario",
+    "username_hint": "El nombre de usuario no se puede cambiar",
+    "bio_label": "Biografía",
+    "bio_placeholder": "Cuéntanos sobre ti...",
+    "image_label": "URL de imagen de perfil",
+    "image_placeholder": "https://example.com/avatar.jpg",
+    "image_hint": "Ingresa una URL para tu imagen de perfil",
+    "save_btn": "Guardar cambios",
+    "saving": "Guardando...",
+    "save_success": "¡Perfil actualizado!",
+    "save_error": "Error al actualizar el perfil. Por favor, inténtalo de nuevo."
+  },
+  "search": {
+    "title": "Resultados de búsqueda",
+    "no_query": "Ingresa una palabra clave para buscar.",
+    "prompts_tab": "Prompts",
+    "users_tab": "Usuarios",
+    "no_results_prompts": "No se encontraron prompts para \"{query}\".",
+    "no_results_users": "No se encontraron usuarios para \"{query}\".",
+    "results_prompts": "{count} prompts encontrados",
+    "results_users": "{count} usuarios encontrados"
   },
   "errors": {
     "required": "Este campo es obligatorio",
@@ -231,5 +313,13 @@
     "server_error": "Algo salió mal. Por favor, inténtalo de nuevo.",
     "not_found": "Página no encontrada",
     "unauthorized": "Por favor, inicia sesión para continuar"
+  },
+  "bookmarks": {
+    "title": "Mis favoritos",
+    "empty_title": "Sin favoritos aún",
+    "empty_desc": "Haz clic en el ícono de marcador para guardar los prompts.",
+    "browse": "Explorar Prompts",
+    "prev": "Anterior",
+    "next": "Siguiente"
   }
 }

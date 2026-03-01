@@ -108,7 +108,7 @@ export function PromptFilters() {
 
       {/* Generation Type — vertical list */}
       <div>
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">유형</p>
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{t('prompts.filter_type')}</p>
         <div className="space-y-0.5">
           <button
             onClick={() => handleGenerationTypeChange('all')}
@@ -120,7 +120,7 @@ export function PromptFilters() {
           >
             <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${generationType === 'all' ? 'bg-indigo-500' : 'bg-gray-300'}`} />
             <Layers size={15} className="flex-shrink-0" />
-            전체
+            {t('prompts.filter_all')}
           </button>
           {GENERATION_TYPES.map((gt) => (
             <button
@@ -146,7 +146,7 @@ export function PromptFilters() {
       {/* Category — only shown when a type is selected */}
       {generationType !== 'all' && categories.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">카테고리</p>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{t('prompts.filter_category')}</p>
           <div className="space-y-0.5">
             <button
               onClick={() => updateParams({ category: 'all' })}
@@ -157,7 +157,7 @@ export function PromptFilters() {
               }`}
             >
               <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${category === 'all' ? 'bg-indigo-500' : 'bg-gray-300'}`} />
-              전체
+              {t('prompts.filter_all')}
             </button>
             {categories.map((cat) => (
               <button
@@ -182,7 +182,7 @@ export function PromptFilters() {
 
       {/* AI Tools — vertical list with color dot */}
       <div>
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">AI 도구</p>
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{t('prompts.filter_ai_tool')}</p>
         <div className="space-y-0.5">
           <button
             onClick={() => updateParams({ aiTool: 'all' })}

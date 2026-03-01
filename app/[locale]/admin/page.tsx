@@ -18,7 +18,10 @@ export default async function AdminPage({ params }: { params: Promise<{ locale: 
 
   await connectDB();
 
-  const [rawPrompts, rawUsers] = await Promise.all([
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const [rawPrompts, rawUsers, totalUsers, totalPrompts, newUsersToday, reportedPrompts] = await Promise.all([
     Prompt.find({})
       .sort({ createdAt: -1 })
       .limit(50)
@@ -29,6 +32,10 @@ export default async function AdminPage({ params }: { params: Promise<{ locale: 
       .limit(50)
       .select('name username email role status promptCount createdAt')
       .lean(),
+    User.countDocuments({}),
+    Prompt.countDocuments({ status: 'active' }),
+    User.countDocuments({ createdAt: { $gte: todayStart } }),
+    Prompt.countDocuments({ reportCount: { $gt: 0 }, status: 'active' }),
   ]);
 
   const prompts = rawPrompts.map((p: any) => ({
@@ -43,5 +50,7 @@ export default async function AdminPage({ params }: { params: Promise<{ locale: 
     createdAt: u.createdAt?.toISOString() ?? '',
   }));
 
-  return <AdminConsole initialPrompts={prompts} initialUsers={users} />;
+  const stats = { totalUsers, totalPrompts, newUsersToday, reportedPrompts };
+
+  return <AdminConsole initialPrompts={prompts} initialUsers={users} stats={stats} />;
 }

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { connectDB } from '@/lib/mongodb';
 import Prompt from '@/models/Prompt';
+import User from '@/models/User';
 import { PromptCard } from '@/components/prompts/PromptCard';
 import { FollowingFeed } from '@/components/home/FollowingFeed';
 import { AdBanner } from '@/components/ads/AdBanner';
@@ -25,10 +26,10 @@ const AI_TOOLS = [
 ];
 
 const GENERATION_TYPES = [
-  { key: 'text', label: '텍스트', icon: FileText, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
-  { key: 'image', label: '이미지', icon: Image, color: 'text-pink-600', bg: 'bg-pink-50', border: 'border-pink-100' },
-  { key: 'video', label: '동영상', icon: Video, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-  { key: 'development', label: '개발', icon: Code2, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+  { key: 'text', icon: FileText, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
+  { key: 'image', icon: Image, color: 'text-pink-600', bg: 'bg-pink-50', border: 'border-pink-100' },
+  { key: 'video', icon: Video, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+  { key: 'development', icon: Code2, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
 ];
 
 function serializePrompt(prompt: any) {
@@ -38,6 +39,7 @@ function serializePrompt(prompt: any) {
     author: prompt.author?.toString() ?? null,
     resultImages: prompt.resultImages ?? [],
     translations: prompt.translations ?? {},
+    viewCount: prompt.viewCount ?? 0,
     createdAt: prompt.createdAt?.toISOString() ?? '',
     updatedAt: prompt.updatedAt?.toISOString() ?? '',
   };
@@ -46,31 +48,34 @@ function serializePrompt(prompt: any) {
 async function getFeaturedPrompts() {
   try {
     await connectDB();
-    const [latest, popular, typeCounts, total] = await Promise.all([
+    const [latest, popular, typeCounts, total, memberCount] = await Promise.all([
       Prompt.find({ status: 'active' }).sort({ createdAt: -1 }).limit(8).lean(),
-      Prompt.find({ status: 'active' }).sort({ likeCount: -1 }).limit(4).lean(),
+      Prompt.find({ status: 'active' }).sort({ trendingScore: -1 }).limit(4).lean(),
       Prompt.aggregate([
         { $match: { status: 'active' } },
         { $group: { _id: '$generationType', count: { $sum: 1 } } },
       ]),
       Prompt.countDocuments({ status: 'active' }),
+      User.countDocuments(),
     ]);
     const typeCountMap = Object.fromEntries(typeCounts.map((c: any) => [c._id, c.count]));
     return {
       latest: latest.map(serializePrompt),
       popular: popular.map(serializePrompt),
       total,
+      memberCount,
       typeCountMap,
     };
   } catch {
-    return { latest: [], popular: [], total: 0, typeCountMap: {} };
+    return { latest: [], popular: [], total: 0, memberCount: 0, typeCountMap: {} };
   }
 }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const { latest, popular, total, typeCountMap } = await getFeaturedPrompts();
+  const { latest, popular, total, memberCount, typeCountMap } = await getFeaturedPrompts();
   const t = await getTranslations('home');
+  const tGenType = await getTranslations('generation_types');
 
   const FEATURES = [
     { icon: Sparkles, title: t('feature_quality_title'), desc: t('feature_quality_desc') },
@@ -126,6 +131,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           {/* Stats */}
           <div className="flex items-center justify-center gap-8 mt-14 pt-8 border-t border-white/10">
             <div className="text-center">
+              <div className="text-2xl font-bold text-white">{memberCount > 0 ? `${memberCount}+` : '1K+'}</div>
+              <div className="text-xs text-slate-500 mt-0.5">{t('stats_members')}</div>
+            </div>
+            <div className="w-px h-8 bg-white/10" />
+            <div className="text-center">
               <div className="text-2xl font-bold text-white">{total > 0 ? `${total}+` : '10K+'}</div>
               <div className="text-xs text-slate-500 mt-0.5">{t('stats_prompts')}</div>
             </div>
@@ -138,11 +148,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <div className="text-center">
               <div className="text-2xl font-bold text-white">6</div>
               <div className="text-xs text-slate-500 mt-0.5">{t('stats_languages')}</div>
-            </div>
-            <div className="w-px h-8 bg-white/10" />
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">{t('stats_free')}</div>
-              <div className="text-xs text-slate-500 mt-0.5">{t('stats_forever')}</div>
             </div>
           </div>
         </div>
@@ -158,16 +163,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="flex items-end justify-between mb-8">
           <div>
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">{t('explore_by_ai')}</p>
-            <h2 className="text-2xl font-bold text-slate-900">탐색하기</h2>
+            <h2 className="text-2xl font-bold text-slate-900">{t('browse_title')}</h2>
           </div>
           <Link href={`/${locale}/explore`} className="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700">
-            전체 보기 <ArrowRight size={14} />
+            {t('view_all')} <ArrowRight size={14} />
           </Link>
         </div>
 
         {/* Generation Types — 4 clean cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-          {GENERATION_TYPES.map(({ key, label, icon: Icon, color, bg, border }) => (
+          {GENERATION_TYPES.map(({ key, icon: Icon, color, bg, border }) => (
             <Link
               key={key}
               href={`/${locale}/prompts?generationType=${key}`}
@@ -177,8 +182,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <Icon size={18} className={color} />
               </div>
               <div>
-                <p className={`font-semibold text-sm ${color}`}>{label}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{typeCountMap[key] ?? 0}개</p>
+                <p className={`font-semibold text-sm ${color}`}>{tGenType(key as any)}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{typeCountMap[key] ?? 0}</p>
               </div>
             </Link>
           ))}
@@ -187,7 +192,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         {/* Divider */}
         <div className="flex items-center gap-3 mb-6">
           <hr className="flex-1 border-gray-100" />
-          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">AI 도구</span>
+          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{t('ai_tools_label')}</span>
           <hr className="flex-1 border-gray-100" />
         </div>
 

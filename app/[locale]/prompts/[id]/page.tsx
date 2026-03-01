@@ -1,9 +1,11 @@
 import { cache } from 'react';
 import { connectDB } from '@/lib/mongodb';
 import Prompt from '@/models/Prompt';
+import User from '@/models/User';
 import { notFound } from 'next/navigation';
 import { LikeButton } from '@/components/social/LikeButton';
 import { BookmarkButton } from '@/components/social/BookmarkButton';
+import { AddToCollectionButton } from '@/components/collections/AddToCollectionButton';
 import { CommentSection } from '@/components/social/CommentSection';
 import { AdBanner } from '@/components/ads/AdBanner';
 import { AIServiceIcon, AI_BRAND_COLORS } from '@/components/icons/AIServiceIcon';
@@ -11,8 +13,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { CopyPromptButton } from '@/components/prompts/CopyPromptButton';
 import { ReportButton } from '@/components/prompts/ReportButton';
+import { ShareButtons } from '@/components/prompts/ShareButtons';
+import { AuthorCard } from '@/components/prompts/AuthorCard';
+import { RelatedPrompts } from '@/components/prompts/RelatedPrompts';
 import { CATEGORY_LABELS, formatDate } from '@/lib/utils';
-import { Eye, ExternalLink, Tag } from 'lucide-react';
+import { Eye, ExternalLink, Tag, Pencil } from 'lucide-react';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import type { Metadata } from 'next';
 
 export const revalidate = 300; // revalidate every 5 minutes
@@ -43,6 +50,44 @@ const getPrompt = cache(async (id: string) => {
     createdAt: p.createdAt?.toISOString() ?? '',
     updatedAt: p.updatedAt?.toISOString() ?? '',
   };
+});
+
+const getAuthor = cache(async (username: string) => {
+  await connectDB();
+  const raw = await User.findOne({ username })
+    .select('_id name username image bio followerCount')
+    .lean();
+  if (!raw) return null;
+  const u = raw as any;
+  return {
+    _id: u._id.toString(),
+    name: u.name as string,
+    username: u.username as string,
+    image: (u.image as string) ?? null,
+    bio: (u.bio as string) ?? null,
+    followerCount: (u.followerCount as number) ?? 0,
+  };
+});
+
+const getRelatedPrompts = cache(async (category: string, currentId: string) => {
+  await connectDB();
+  const raws = await Prompt.find({
+    category,
+    status: 'active',
+    _id: { $ne: currentId },
+  })
+    .sort({ likeCount: -1 })
+    .limit(4)
+    .select('title description aiTool category resultImages authorName authorUsername likeCount commentCount viewCount createdAt slug')
+    .lean();
+
+  return raws.map((r: any) => ({
+    ...r,
+    _id: r._id.toString(),
+    createdAt: r.createdAt?.toISOString() ?? '',
+    resultImages: r.resultImages ?? [],
+    slug: r.slug ?? r._id.toString(),
+  }));
 });
 
 export async function generateMetadata({ params }: PromptDetailPageProps): Promise<Metadata> {
@@ -82,6 +127,14 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
   if (!prompt) notFound();
 
   const p = prompt;
+
+  const [authorData, relatedPrompts, session] = await Promise.all([
+    getAuthor(p.authorUsername),
+    getRelatedPrompts(p.category, p._id),
+    getServerSession(authOptions),
+  ]);
+
+  const isAuthor = !!(session?.user && (session.user as any).id === p.author);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -214,9 +267,20 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
           )}
 
           {/* Action buttons */}
-          <div className="flex items-center gap-3 mb-8 pb-6 border-b border-gray-200 mt-6">
+          <div className="flex items-center gap-3 mb-8 pb-6 border-b border-gray-200 mt-6 flex-wrap">
             <LikeButton promptId={p._id.toString()} initialCount={p.likeCount} locale={locale} />
             <BookmarkButton promptId={p._id.toString()} locale={locale} />
+            <AddToCollectionButton promptId={p._id.toString()} />
+            <ShareButtons />
+            {isAuthor && (
+              <Link
+                href={`/${locale}/prompts/${p._id}/edit`}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                <Pencil size={14} />
+                Edit
+              </Link>
+            )}
             <div className="ml-auto">
               <ReportButton promptId={p._id.toString()} />
             </div>
@@ -227,10 +291,16 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
 
           {/* Comments */}
           <CommentSection promptId={p._id.toString()} locale={locale} />
+
+          {/* Related Prompts */}
+          <RelatedPrompts prompts={relatedPrompts} locale={locale} />
         </div>
 
         {/* Sidebar */}
         <aside className="lg:w-80 shrink-0 space-y-4">
+          {/* Author Card */}
+          {authorData && <AuthorCard author={authorData} locale={locale} />}
+
           <AdBanner adSlot="4444444444" adFormat="rectangle" />
 
           {/* Tags */}

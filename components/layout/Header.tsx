@@ -3,9 +3,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useSession, signOut } from 'next-auth/react';
-import { useState } from 'react';
-import { Menu, X, Globe, ChevronDown, BookmarkIcon, PenSquare, LogOut, User } from 'lucide-react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { Menu, X, Globe, ChevronDown, BookmarkIcon, PenSquare, LogOut, User, Search, Shield } from 'lucide-react';
+import { NotificationBadge } from '@/components/notifications/NotificationBadge';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { locales } from '@/i18n';
 
 const LOCALE_NAMES: Record<string, string> = {
@@ -23,8 +24,23 @@ export function Header({ locale }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setSearchQuery(searchParams.get('q') ?? '');
+  }, [pathname]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) return;
+    router.push(`/${locale}/search?q=${encodeURIComponent(q)}`);
+    setSearchOpen(false);
+  };
 
   const switchLocale = (newLocale: string) => {
     const segments = pathname.split('/');
@@ -62,6 +78,18 @@ export function Header({ locale }: HeaderProps) {
               {t('nav.explore')}
             </Link>
           </nav>
+
+          {/* Desktop Search */}
+          <form onSubmit={handleSearch} className="hidden md:block relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('common.search_placeholder')}
+              className="w-56 focus:w-72 transition-all duration-200 pl-8 pr-3 py-1.5 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </form>
 
           {/* Right side */}
           <div className="flex items-center gap-2">
@@ -102,6 +130,7 @@ export function Header({ locale }: HeaderProps) {
                   <PenSquare size={14} />
                   {t('nav.submit')}
                 </Link>
+                <NotificationBadge locale={locale} />
                 <div className="relative">
                   <button
                     onClick={() => { setUserOpen(!userOpen); setLangOpen(false); }}
@@ -118,6 +147,12 @@ export function Header({ locale }: HeaderProps) {
                         <p className="text-sm font-semibold text-slate-900">{session.user?.name}</p>
                         <p className="text-xs text-slate-400 mt-0.5">{session.user?.email}</p>
                       </div>
+                      {(session.user as any)?.role === 'admin' && (
+                        <Link href={`/${locale}/admin`} onClick={() => setUserOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-indigo-700 hover:bg-indigo-50 transition-colors border-b border-slate-100">
+                          <Shield size={14} className="text-indigo-500" /> Admin Console
+                        </Link>
+                      )}
                       <Link href={`/${locale}/mypage`} onClick={() => setUserOpen(false)}
                         className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
                         <User size={14} className="text-slate-400" /> 마이페이지
@@ -149,6 +184,14 @@ export function Header({ locale }: HeaderProps) {
               </div>
             )}
 
+            {/* Mobile search icon */}
+            <button
+              className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
+              onClick={() => { setSearchOpen(!searchOpen); setMobileOpen(false); }}
+            >
+              <Search size={18} className="text-slate-600" />
+            </button>
+
             {/* Mobile toggle */}
             <button className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors" onClick={() => setMobileOpen(!mobileOpen)}>
               {mobileOpen ? <X size={18} className="text-slate-600" /> : <Menu size={18} className="text-slate-600" />}
@@ -156,6 +199,23 @@ export function Header({ locale }: HeaderProps) {
           </div>
         </div>
       </div>
+
+      {/* Mobile search panel */}
+      {searchOpen && (
+        <div className="md:hidden border-t border-slate-200 bg-white/95 backdrop-blur-sm px-4 py-3">
+          <form onSubmit={handleSearch} className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('common.search_placeholder')}
+              autoFocus
+              className="w-full pl-8 pr-4 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </form>
+        </div>
+      )}
 
       {/* Mobile menu */}
       {mobileOpen && (

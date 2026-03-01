@@ -85,6 +85,15 @@ export function CommentSection({ promptId, locale }: CommentSectionProps) {
     setComments((prev) => prev.filter((c) => c._id !== commentId));
   };
 
+  const deleteReply = async (replyId: string, parentId: string) => {
+    if (!confirm(t('common.delete'))) return;
+    await fetch(`/api/comments/${replyId}`, { method: 'DELETE' });
+    setReplies((prev) => ({
+      ...prev,
+      [parentId]: (prev[parentId] || []).filter((r) => r._id !== replyId),
+    }));
+  };
+
   const userId = (session?.user as any)?.id;
   const username = (session?.user as any)?.username;
 
@@ -130,6 +139,13 @@ export function CommentSection({ promptId, locale }: CommentSectionProps) {
             <div key={comment._id} className="bg-gray-50 rounded-lg p-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2 mb-2">
+                  {comment.authorImage ? (
+                    <Image src={comment.authorImage} alt={comment.authorUsername} width={24} height={24} className="rounded-full object-cover" />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-medium text-indigo-600">
+                      {comment.authorUsername.charAt(0).toUpperCase()}
+                    </div>
+                  )}
                   <span className="font-medium text-sm text-gray-900">@{comment.authorUsername}</span>
                   <span className="text-xs text-gray-400">{formatDate(comment.createdAt)}</span>
                 </div>
@@ -184,9 +200,23 @@ export function CommentSection({ promptId, locale }: CommentSectionProps) {
               {/* Replies */}
               {expandedReplies.has(comment._id) && replies[comment._id]?.map((reply) => (
                 <div key={reply._id} className="mt-3 pl-4 border-l-2 border-gray-200">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-medium text-xs text-gray-900">@{reply.authorUsername}</span>
-                    <span className="text-xs text-gray-400">{formatDate(reply.createdAt)}</span>
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-2 mb-1">
+                      {reply.authorImage ? (
+                        <Image src={reply.authorImage} alt={reply.authorUsername} width={20} height={20} className="rounded-full object-cover" />
+                      ) : (
+                        <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-medium text-indigo-600">
+                          {reply.authorUsername.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <span className="font-medium text-xs text-gray-900">@{reply.authorUsername}</span>
+                      <span className="text-xs text-gray-400">{formatDate(reply.createdAt)}</span>
+                    </div>
+                    {username === reply.authorUsername && (
+                      <button onClick={() => deleteReply(reply._id, comment._id)} className="text-gray-400 hover:text-red-500">
+                        <Trash2 size={12} />
+                      </button>
+                    )}
                   </div>
                   <p className="text-sm text-gray-700">{reply.content}</p>
                 </div>

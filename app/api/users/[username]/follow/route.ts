@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { connectDB } from '@/lib/mongodb';
 import Follow from '@/models/Follow';
 import User from '@/models/User';
+import { createNotification } from '@/lib/notifications';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ username: string }> }) {
   const { username } = await params;
@@ -23,9 +24,21 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ use
     const existing = await Follow.findOne({ follower: followerId, following: target._id });
     if (existing) {
       await Follow.deleteOne({ _id: existing._id });
+      await User.updateOne({ _id: target._id }, { $inc: { followerCount: -1 } });
+      await User.updateOne({ _id: followerId }, { $inc: { followingCount: -1 } });
       return NextResponse.json({ following: false });
     } else {
       await Follow.create({ follower: followerId, following: target._id });
+      await User.updateOne({ _id: target._id }, { $inc: { followerCount: 1 } });
+      await User.updateOne({ _id: followerId }, { $inc: { followingCount: 1 } });
+      createNotification({
+        recipient: target._id.toString(),
+        actor: followerId,
+        actorName: (session.user as any).name ?? '',
+        actorUsername: (session.user as any).username ?? '',
+        actorImage: (session.user as any).image ?? undefined,
+        type: 'follow',
+      }).catch(() => {});
       return NextResponse.json({ following: true });
     }
   } catch {

@@ -34,14 +34,17 @@ export async function GET(req: NextRequest) {
     const bookmarksMap = new Map(weeklyBookmarks.map((b) => [b._id.toString(), b.count]));
 
     // Fetch all active prompts with current stats
-    const prompts = await Prompt.find({ status: 'active' }).select('_id viewCount copyCount').lean();
+    const prompts = await Prompt.find({ status: 'active' }).select('_id copyCount createdAt').lean();
 
     // Bulk update trendingScore for each prompt
+    const now = Date.now();
     const bulkOps = prompts.map((p: any) => {
       const id = p._id.toString();
       const wLikes = likesMap.get(id) ?? 0;
       const wBookmarks = bookmarksMap.get(id) ?? 0;
-      const score = wLikes * 3 + wBookmarks * 2 + p.viewCount * 0.05 + p.copyCount * 0.5;
+      const ageInDays = (now - new Date(p.createdAt).getTime()) / (1000 * 60 * 60 * 24);
+      const decay = 1 / (1 + ageInDays * 0.1);
+      const score = (wLikes * 3 + wBookmarks * 2 + p.copyCount * 0.5) * decay;
       return {
         updateOne: {
           filter: { _id: p._id },

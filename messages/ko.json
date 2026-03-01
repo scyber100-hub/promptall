@@ -130,7 +130,51 @@
     "featured_title": "추천 프롬프트",
     "latest_title_old": "최신 프롬프트",
     "trending_title": "지금 트렌딩",
-    "explore_by_category": "카테고리별 탐색"
+    "explore_by_category": "카테고리별 탐색",
+    "browse_title": "탐색하기",
+    "ai_tools_label": "AI 도구",
+    "stats_members": "멤버"
+  },
+  "feed": {
+    "title": "팔로우 피드",
+    "empty": "팔로우한 사용자가 없습니다.",
+    "browse_link": "프롬프트 탐색 →",
+    "following_badge": "팔로잉"
+  },
+  "notifications": {
+    "title": "알림",
+    "mark_all_read": "모두 읽음",
+    "no_notifications": "아직 알림이 없습니다.",
+    "follow": "{name}님이 팔로우했습니다.",
+    "like": "{name}님이 \"{title}\"에 좋아요를 눌렀습니다.",
+    "comment": "{name}님이 \"{title}\"에 댓글을 달았습니다.",
+    "comment_reply": "{name}님이 댓글에 답글을 달았습니다.",
+    "just_now": "방금",
+    "minutes_ago": "{count}분 전",
+    "hours_ago": "{count}시간 전",
+    "days_ago": "{count}일 전"
+  },
+  "collections": {
+    "new_title": "새 컬렉션",
+    "edit_title": "컬렉션 수정",
+    "title_label": "제목",
+    "title_placeholder": "컬렉션 이름",
+    "description_label": "설명 (선택)",
+    "description_placeholder": "이 컬렉션에 대해 설명해주세요",
+    "public_label": "공개 컬렉션",
+    "create_btn": "컬렉션 만들기",
+    "save_btn": "저장",
+    "delete_confirm": "이 컬렉션을 삭제하시겠습니까?",
+    "add_prompt": "컬렉션에 추가",
+    "remove_prompt": "컬렉션에서 제거",
+    "added": "추가됨!",
+    "removed": "제거됨",
+    "no_collections": "아직 컬렉션이 없습니다.",
+    "no_prompts": "아직 프롬프트가 없습니다.",
+    "prompts_count": "프롬프트 {count}개",
+    "by_owner": "{name}의",
+    "select_collection": "컬렉션 선택",
+    "create_new": "새 컬렉션 만들기"
   },
   "explore": {
     "title": "프롬프트 둘러보기",
@@ -165,6 +209,10 @@
     "sort_latest": "최신순",
     "sort_popular": "인기순",
     "sort_trending": "트렌딩",
+    "filter_type": "유형",
+    "filter_category": "카테고리",
+    "filter_ai_tool": "AI 도구",
+    "filter_all": "전체",
     "copy_prompt": "프롬프트 복사",
     "prompt_copied": "복사되었습니다!",
     "likes": "좋아요 {count}",
@@ -222,7 +270,41 @@
     "no_liked": "아직 좋아요한 프롬프트가 없습니다.",
     "no_bookmarks": "아직 북마크가 없습니다.",
     "member_since": "{date}에 가입",
-    "prompts_count": "프롬프트 {count}개"
+    "prompts_count": "프롬프트 {count}개",
+    "followers": "팔로워",
+    "following": "팔로잉",
+    "followers_title": "팔로워",
+    "following_title": "팔로잉",
+    "no_followers": "아직 팔로워가 없습니다.",
+    "no_following": "아직 팔로우한 사용자가 없습니다.",
+    "collections_tab": "컬렉션"
+  },
+  "settings": {
+    "profile_title": "프로필 수정",
+    "back": "뒤로",
+    "name_label": "이름",
+    "name_placeholder": "이름을 입력하세요",
+    "username_label": "사용자명",
+    "username_hint": "사용자명은 변경할 수 없습니다",
+    "bio_label": "소개",
+    "bio_placeholder": "자신을 소개해주세요...",
+    "image_label": "프로필 이미지 URL",
+    "image_placeholder": "https://example.com/avatar.jpg",
+    "image_hint": "프로필 이미지 URL을 입력하세요",
+    "save_btn": "저장",
+    "saving": "저장 중...",
+    "save_success": "프로필이 업데이트되었습니다!",
+    "save_error": "프로필 업데이트에 실패했습니다. 다시 시도해주세요."
+  },
+  "search": {
+    "title": "검색 결과",
+    "no_query": "검색어를 입력해주세요.",
+    "prompts_tab": "프롬프트",
+    "users_tab": "사용자",
+    "no_results_prompts": "\"{query}\"에 대한 프롬프트를 찾을 수 없습니다.",
+    "no_results_users": "\"{query}\"에 대한 사용자를 찾을 수 없습니다.",
+    "results_prompts": "프롬프트 {count}개 발견",
+    "results_users": "사용자 {count}명 발견"
   },
   "errors": {
     "required": "필수 입력 항목입니다",
@@ -231,5 +313,13 @@
     "server_error": "오류가 발생했습니다. 다시 시도해주세요.",
     "not_found": "페이지를 찾을 수 없습니다",
     "unauthorized": "계속하려면 로그인해주세요"
+  },
+  "bookmarks": {
+    "title": "내 북마크",
+    "empty_title": "북마크가 없습니다",
+    "empty_desc": "북마크 아이콘을 클릭하여 마음에 드는 프롬프트를 저장하세요.",
+    "browse": "프롬프트 탐색",
+    "prev": "이전",
+    "next": "다음"
   }
 }

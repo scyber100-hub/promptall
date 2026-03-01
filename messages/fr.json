@@ -130,7 +130,51 @@
     "featured_title": "Prompts en vedette",
     "latest_title_old": "Derniers prompts",
     "trending_title": "Tendances",
-    "explore_by_category": "Explorer par catégorie"
+    "explore_by_category": "Explorer par catégorie",
+    "browse_title": "Explorer",
+    "ai_tools_label": "Outils AI",
+    "stats_members": "Membres"
+  },
+  "feed": {
+    "title": "Fil des abonnements",
+    "empty": "Vous ne suivez personne encore.",
+    "browse_link": "Explorer les Prompts →",
+    "following_badge": "Abonnements"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "mark_all_read": "Tout marquer comme lu",
+    "no_notifications": "Pas encore de notifications.",
+    "follow": "{name} vous suit.",
+    "like": "{name} a aimé \"{title}\".",
+    "comment": "{name} a commenté \"{title}\".",
+    "comment_reply": "{name} a répondu à votre commentaire.",
+    "just_now": "À l'instant",
+    "minutes_ago": "il y a {count}m",
+    "hours_ago": "il y a {count}h",
+    "days_ago": "il y a {count}j"
+  },
+  "collections": {
+    "new_title": "Nouvelle collection",
+    "edit_title": "Modifier la collection",
+    "title_label": "Titre",
+    "title_placeholder": "Nom de la collection",
+    "description_label": "Description (optionnel)",
+    "description_placeholder": "De quoi parle cette collection ?",
+    "public_label": "Collection publique",
+    "create_btn": "Créer la collection",
+    "save_btn": "Enregistrer",
+    "delete_confirm": "Êtes-vous sûr de vouloir supprimer cette collection ?",
+    "add_prompt": "Ajouter à la collection",
+    "remove_prompt": "Retirer de la collection",
+    "added": "Ajouté !",
+    "removed": "Retiré",
+    "no_collections": "Pas encore de collections.",
+    "no_prompts": "Cette collection n'a pas encore de prompts.",
+    "prompts_count": "{count} prompts",
+    "by_owner": "par {name}",
+    "select_collection": "Sélectionner une collection",
+    "create_new": "Créer une nouvelle collection"
   },
   "explore": {
     "title": "Explorer les prompts",
@@ -165,6 +209,10 @@
     "sort_latest": "Plus récents",
     "sort_popular": "Plus populaires",
     "sort_trending": "Tendances",
+    "filter_type": "Type",
+    "filter_category": "Catégorie",
+    "filter_ai_tool": "Outil IA",
+    "filter_all": "Tout",
     "copy_prompt": "Copier le prompt",
     "prompt_copied": "Prompt copié !",
     "likes": "{count} j'aime",
@@ -222,7 +270,41 @@
     "no_liked": "Aucun prompt aimé pour l'instant.",
     "no_bookmarks": "Aucun sauvegardé pour l'instant.",
     "member_since": "Membre depuis {date}",
-    "prompts_count": "{count} prompts"
+    "prompts_count": "{count} prompts",
+    "followers": "abonnés",
+    "following": "abonnements",
+    "followers_title": "Abonnés",
+    "following_title": "Abonnements",
+    "no_followers": "Pas encore d'abonnés.",
+    "no_following": "Vous ne suivez personne encore.",
+    "collections_tab": "Collections"
+  },
+  "settings": {
+    "profile_title": "Modifier le profil",
+    "back": "Retour",
+    "name_label": "Nom",
+    "name_placeholder": "Votre nom",
+    "username_label": "Nom d'utilisateur",
+    "username_hint": "Le nom d'utilisateur ne peut pas être modifié",
+    "bio_label": "Biographie",
+    "bio_placeholder": "Parlez-nous de vous...",
+    "image_label": "URL de l'image de profil",
+    "image_placeholder": "https://example.com/avatar.jpg",
+    "image_hint": "Entrez une URL pour votre image de profil",
+    "save_btn": "Enregistrer les modifications",
+    "saving": "Enregistrement...",
+    "save_success": "Profil mis à jour !",
+    "save_error": "Échec de la mise à jour du profil. Veuillez réessayer."
+  },
+  "search": {
+    "title": "Résultats de recherche",
+    "no_query": "Entrez un mot-clé pour rechercher.",
+    "prompts_tab": "Prompts",
+    "users_tab": "Utilisateurs",
+    "no_results_prompts": "Aucun prompt trouvé pour \"{query}\".",
+    "no_results_users": "Aucun utilisateur trouvé pour \"{query}\".",
+    "results_prompts": "{count} prompts trouvés",
+    "results_users": "{count} utilisateurs trouvés"
   },
   "errors": {
     "required": "Ce champ est obligatoire",
@@ -231,5 +313,13 @@
     "server_error": "Une erreur s'est produite. Veuillez réessayer.",
     "not_found": "Page non trouvée",
     "unauthorized": "Veuillez vous connecter pour continuer"
+  },
+  "bookmarks": {
+    "title": "Mes favoris",
+    "empty_title": "Aucun favori",
+    "empty_desc": "Cliquez sur l'icône favori pour sauvegarder les prompts.",
+    "browse": "Explorer les Prompts",
+    "prev": "Précédent",
+    "next": "Suivant"
   }
 }

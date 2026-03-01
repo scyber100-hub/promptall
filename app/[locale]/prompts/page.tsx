@@ -55,6 +55,7 @@ async function getPrompts(searchParams: SearchParamsObj) {
     author: p.author?.toString() ?? null,
     resultImages: p.resultImages ?? [],
     translations: p.translations ?? {},
+    viewCount: p.viewCount ?? 0,
     createdAt: p.createdAt?.toISOString() ?? '',
     updatedAt: p.updatedAt?.toISOString() ?? '',
   }));
@@ -76,6 +77,19 @@ export default async function PromptsPage({ params, searchParams }: PromptsPageP
     const urlParams = new URLSearchParams(resolvedSearchParams as Record<string, string>);
     urlParams.set('page', p.toString());
     return `/${locale}/prompts?${urlParams.toString()}`;
+  };
+
+  const getPaginationRange = (current: number, total: number): (number | '...')[] => {
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const delta = 2;
+    const range: (number | '...')[] = [1];
+    if (current - delta > 2) range.push('...');
+    for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
+      range.push(i);
+    }
+    if (current + delta < total - 1) range.push('...');
+    range.push(total);
+    return range;
   };
 
   return (
@@ -129,17 +143,23 @@ export default async function PromptsPage({ params, searchParams }: PromptsPageP
                       <ChevronLeft size={16} />
                     </Link>
                   )}
-                  {Array.from({ length: Math.min(pages, 7) }, (_, i) => i + 1).map((p) => (
-                    <Link
-                      key={p}
-                      href={buildUrl(p)}
-                      className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium ${
-                        p === page ? 'bg-indigo-600 text-white' : 'border border-gray-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      {p}
-                    </Link>
-                  ))}
+                  {getPaginationRange(page, pages).map((p, idx) =>
+                    p === '...' ? (
+                      <span key={`ellipsis-${idx}`} className="w-9 h-9 flex items-center justify-center text-sm text-gray-400">
+                        …
+                      </span>
+                    ) : (
+                      <Link
+                        key={p}
+                        href={buildUrl(p)}
+                        className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium ${
+                          p === page ? 'bg-indigo-600 text-white' : 'border border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        {p}
+                      </Link>
+                    )
+                  )}
                   {page < pages && (
                     <Link href={buildUrl(page + 1)} className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
                       <ChevronRight size={16} />

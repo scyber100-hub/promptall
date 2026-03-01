@@ -1,7 +1,5 @@
 {
-  "feature": "promptall",
+  "feature": "bookmarks-enhancement",
   "phase": "archived",
-  "matchRate": 100,
-  "lastUpdated": "2026-02-25",
-  "archivedTo": "docs/archive/2026-02/promptall/"
+  "lastUpdated": "2026-03-01"
 }
